@@ -20,11 +20,12 @@ npm run test:browser
 
 Avec Chrome déjà installé : `BROWSER_CHANNEL=chrome npm run test:browser` (syntaxe macOS/Linux). `PLAYWRIGHT_MODULE` peut désigner une installation locale existante du paquet Playwright.
 
-Les tests utilisent une fixture locale, à 1280 et 390 pixels. Ils comparent une capture de l'original à celle du fichier généré, puis vérifient Démarrer, flèches/Début/Fin/Échap, focus, thèmes, densité, désactivation/restauration, stockage entre chargements, commande du gestionnaire, mise à jour du titre, double injection et actions natives. Les images distantes sont bloquées pour tester le repli hors ligne. Cela ne valide pas la disponibilité du fournisseur d'icônes ni le DOM réel d'Onche.
+Les tests utilisent une fixture locale, à 1280 et 390 pixels. Ils vérifient le chargement du forum en iframe, l'absence de bureau récursif, le déplacement, l'ouverture d'un topic, l'ordre stable des tâches, la réduction, la restauration, la fermeture, Démarrer, le clavier, les thèmes, la densité, la désactivation et la double injection. Les images distantes sont bloquées pour tester le repli hors ligne. Cela ne valide pas la disponibilité du fournisseur d'icônes ni toutes les pages privées d'Onche.
 
 ## Recette sur Onche
 
-- Accueil, liste de sujets, sujet long, navigation et titre collant.
+- Accueil, liste de sujets, sujet long, navigation, pagination active et titre collant.
+- Ouverture de plusieurs topics, ordre stable, déplacement, redimensionnement, réduction, restauration et fermeture.
 - Thèmes 95 et 98, mode compact, désactivation et restauration, rechargement.
 - Tabulation et activation clavier ; focus visible et retour après fermeture.
 - Petits écrans, zoom 200 %, impression et thèmes natifs clairs/sombres.

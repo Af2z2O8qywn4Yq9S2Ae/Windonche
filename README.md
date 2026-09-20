@@ -1,6 +1,6 @@
 # Windonche
 
-Un userscript qui donne à **Onche** l'apparence de Windows 95 ou Windows 98 : palette rétro, barre des tâches multi-topics, menu Démarrer, icônes et liste de sujets compacte.
+Un userscript qui transforme **Onche** en bureau Windows 95 ou Windows 98 : fenêtres de topics, barre des tâches, menu Démarrer, icônes et liste de sujets compacte.
 
 ## Installer
 
@@ -8,7 +8,9 @@ Un userscript qui donne à **Onche** l'apparence de Windows 95 ou Windows 98 : p
 2. Ouvrir [`dist/windonche.user.js`](dist/windonche.user.js), puis **Raw** pour l'installer. On peut aussi copier ce fichier dans un nouveau script du gestionnaire.
 3. Recharger Onche. Le bouton **Démarrer** permet de choisir le thème, la densité ou l'apparence d'origine.
 
-Chaque topic visité dans le même onglet navigateur est ajouté à la barre des tâches. Cliquer sur un bouton revient à ce topic ; la croix ferme le topic actif et ouvre le précédent, ou revient au Blabla Général si la liste est vide. Cette liste est limitée à l'onglet courant et disparaît quand celui-ci est fermé.
+La liste des topics et chaque sujet s'ouvrent dans des fenêtres indépendantes. Leur barre de titre permet de les déplacer ; les boutons réduisent ou ferment la fenêtre, tandis que la barre des tâches les restaure sans modifier leur ordre. Les pages 1, 2, 3… d'un même topic restent dans la même fenêtre et la page courante est mise en évidence. Le bureau conserve au maximum huit fenêtres dans l'onglet navigateur courant.
+
+Sur mobile, une seule fenêtre est affichée à la fois et le déplacement est désactivé. Désactiver le thème restitue immédiatement la page Onche d'origine.
 
 Installer uniquement le fichier généré dans `dist/`. Les modules de `src/` ne sont pas des userscripts autonomes. Remplacer l'ancienne installation en conservant son stockage pour retrouver ses préférences ; éviter d'activer deux copies.
 
@@ -30,7 +32,7 @@ src/
   themes/              Palettes, contrastes et moteur CSS
   icons/               URLs des images et adaptation des icônes Onche
   styles/              CSS : disposition, sujets, messages, contrôles, widgets
-  desktop/             HTML du bureau, commandes, clavier, titre et horloge
+  desktop/             Bureau, gestionnaire de fenêtres, commandes, clavier et horloge
 scripts/build.mjs      Assemblage autonome JS + CSS
 userscript.meta.txt    Métadonnées du userscript
 tests/               Tests et fixtures de non-régression
@@ -46,6 +48,7 @@ Voir [l'architecture](docs/architecture.md), [le guide de contribution](CONTRIBU
 - Les clés historiques `retro-enabled`, `retro-version`, `retro-compact` sont conservées.
 - Sans accès au stockage, le thème reste utilisable pendant la session.
 - Le bureau est isolé dans un Shadow DOM ; les styles du forum utilisent `data-onche-retro`.
+- Les pages Onche sont chargées dans des iframes de même origine afin de conserver connexion, formulaires et scripts natifs. Une évolution des en-têtes de sécurité du site pourrait nécessiter une autre intégration.
 - Liens, messages et gestionnaires d'événements natifs sont conservés.
 - Les 243 icônes PNG sont versionnées dans [`assets/icons/`](assets/icons/) et chargées depuis la copie GitHub de ce dépôt. Aucun JavaScript distant n'est chargé. Le thème reste utilisable si les images sont indisponibles.
 - Clavier : Tabulation, Entrée, Espace, flèches, Début/Fin dans Démarrer, Échap pour fermer. Le focus revient à une commande visible après activation/désactivation.

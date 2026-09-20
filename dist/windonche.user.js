@@ -1,15 +1,14 @@
 // ==UserScript==
 // @name         Onche — Windows 95 / 98
 // @namespace    local.onche.windows-retro
-// @version      2.3.0
-// @description  Thèmes Windows 95/98 pour Onche avec barre des tâches multi-topics et bibliothèque d'icônes auto-hébergée.
+// @version      2.4.0
+// @description  Bureau Windows 95/98 pour Onche avec fenêtres de topics déplaçables et icônes auto-hébergées.
 // @match        https://onche.org/*
 // @match        https://www.onche.org/*
 // @run-at       document-end
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @noframes
 // @license      MIT
 // ==/UserScript==
 
@@ -182,6 +181,9 @@ modules["src/styles/widgets.css"] = { default: "/* Finishing: editor, account me
 // Source: src/styles/onche-adapter.css
 modules["src/styles/onche-adapter.css"] = { default: "/* Original heading stays in flow. Only Onche's clone is fixed. */\nhtml[data-onche-retro] :is(#forum,#topic) > .title {\n  position:relative!important; top:auto!important; left:auto!important;\n  transform:none!important; margin:0!important; z-index:1!important;\n}\nhtml[data-onche-retro] .sticky-container { top:var(--w9-chrome-height)!important; }\nhtml[data-onche-retro] .sticky-container > .title {\n  position:relative!important; top:auto!important; margin:0!important;\n  background:var(--w9-title)!important; color:var(--w9-selectedText)!important;\n  padding:5px 7px!important; border:0!important;\n}\nhtml[data-onche-retro] .sticky-container > .title :is(h1,h2,a,span,.mdi) { color:var(--w9-selectedText)!important; }\n/* Stories are thumbnails, not raised command buttons. Preserve native visibility. */\nhtml[data-onche-retro] #stories-root { position:relative!important; clear:both; margin:0!important; }\nhtml[data-onche-retro] .stories-bar { background:var(--w9-face)!important; padding:10px!important; }\nhtml[data-onche-retro] .stories-bubble {\n  padding:2px!important; background:transparent!important; border:0!important;\n  box-shadow:none!important; color:var(--w9-ink)!important;\n}\nhtml[data-onche-retro] .stories-bubble__ring {\n  background:var(--w9-face)!important; box-shadow:var(--w9-sunken)!important;\n  padding:3px!important; transform:none!important;\n}\nhtml[data-onche-retro] .stories-bubble--unseen .stories-bubble__ring { outline:2px solid var(--w9-selected); outline-offset:1px; }\nhtml[data-onche-retro] .stories-bubble__name,\nhtml[data-onche-retro] .stories-bubble > :is(span,div):last-child {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:var(--w9-ink)!important;\n  text-shadow:none!important; opacity:1!important;\n}\n/* Neutralize gradient usernames on light surfaces; keep title usernames white. */\nhtml[data-onche-retro] body .pseudo {\n  background-image:none!important; background-clip:border-box!important;\n  -webkit-text-fill-color:currentColor!important; color:var(--w9-ink)!important;\n  text-shadow:none!important;\n}\nhtml[data-onche-retro] body > header :is(a,span,.username,.pseudo) {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:currentColor!important;\n  opacity:1!important; text-shadow:none!important;\n}\nhtml[data-onche-retro] body .messages > .message > .message-top .pseudo,\nhtml[data-onche-retro] body .topics .topic:hover .pseudo {\n  color:var(--w9-selectedText)!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] #right .content:not(.centered) { background:var(--w9-surface)!important; }\nhtml[data-onche-retro] #right .content:not(.centered) :is(a,span,.color,.pseudo) {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] #right .content.links a:hover,\nhtml[data-onche-retro] #right .content.links a:hover * { color:var(--w9-selectedText)!important; }\nhtml[data-onche-retro] :is(.bloc-title-more,.bloc > .title .right) { opacity:1!important; }\nhtml[data-onche-retro] .bloc > .title .button {\n  background:var(--w9-face)!important; color:var(--w9-ink)!important;\n}\nhtml[data-onche-retro] .bloc > .title .button * { color:var(--w9-ink)!important; }\nhtml[data-onche-retro] :is(.button,button):not(:disabled):not([aria-disabled=\"true\"]) {\n  opacity:1!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] :is(.message-date,.answer-date,.topic-username,.composer__welcome) { color:var(--w9-muted)!important; }\n/* Do not recolor spoiler descendants or alter their visibility. */\nhtml[data-onche-retro] #context { background:var(--w9-face)!important; color:var(--w9-ink)!important; box-shadow:var(--w9-raised)!important; }\nhtml[data-onche-retro] #context .item { color:var(--w9-ink)!important; }\nhtml[data-onche-retro] #context .item:hover { background:var(--w9-selected)!important; color:var(--w9-selectedText)!important; }\n" };
 
+// Source: src/styles/windowed.css
+modules["src/styles/windowed.css"] = { default: "html[data-onche-windowed] body { overflow:hidden!important; }\nhtml[data-onche-windowed] body > :not(#onche-retro-desktop) { display:none!important; }\n\n/* Dans une fenêtre, le site conserve son fonctionnement sans le chrome global. */\nhtml[data-onche-frame][data-onche-retro] body { padding-bottom:0!important; }\nhtml[data-onche-frame][data-onche-retro] body > header { top:0!important; }\nhtml[data-onche-frame][data-onche-retro] #content { padding-top:60px!important; }\nhtml[data-onche-frame][data-onche-retro] body.sticky-right #content #right { top:56px!important; }\n\n/* La page courante doit rester évidente parmi plusieurs dizaines de pages. */\nhtml[data-onche-retro] body #content .pagination > a.active,\nhtml[data-onche-retro] body #content .pagination > a[aria-current=\"page\"] {\n  background:var(--w9-selected)!important; color:var(--w9-selectedText)!important;\n  box-shadow:var(--w9-sunken)!important; outline:1px dotted var(--w9-selectedText)!important;\n  outline-offset:-4px; font-weight:700!important;\n}\n" };
+
 // Source: src/icons/assets.js
 modules["src/icons/assets.js"] = (() => {
 // Copies PNG versionnées dans ce dépôt et servies directement par GitHub.
@@ -208,6 +210,7 @@ const { default: messages } = modules["src/styles/messages.css"];
 const { default: controls } = modules["src/styles/controls.css"];
 const { default: widgets } = modules["src/styles/widgets.css"];
 const { default: adapter } = modules["src/styles/onche-adapter.css"];
+const { default: windowed } = modules["src/styles/windowed.css"];
 const { iconURL } = modules["src/icons/assets.js"];
 
 /** L'ordre de cascade reproduit celui du userscript d'origine. */
@@ -215,6 +218,7 @@ function installStyles(engine) {
   engine.use('components', [layout, topics, messages, controls, widgets]
     .join('\n').replaceAll('__BROWSER_ICON_URL__', iconURL('internet-explorer-16x16')));
   engine.use('onche-adapter', adapter);
+  engine.use('windowed', windowed);
 }
 
 return { installStyles };
@@ -265,12 +269,12 @@ const { THEMES } = modules["src/themes/registry.js"];
 const { icon } = modules["src/icons/assets.js"];
 
 function renderDesktop() {
-  return `<div class="title" data-version="98">${icon('internet-explorer-16x16')}<span class="caption">Onche — Internet Explorer</span><button class="raised close" title="Rétablir l’apparence d’origine" aria-label="Désactiver le thème Windows">×</button></div>
+  return `<main class="workspace" aria-label="Bureau Windonche"></main>
 <nav class="menu" aria-label="Menu Démarrer" id="start-menu" hidden>
  <div class="brand" aria-hidden="true">Windows 98</div>
  <div class="items">
-  <a href="/">${icon('my-computer-32x32',32)}<span>Accueil Onche</span></a>
-  <a href="/forum/1/blabla-general">${icon('news-32x32',32)}<span>Blabla Général</span></a>
+  <a href="/" data-window-url="/">${icon('my-computer-32x32',32)}<span>Accueil Onche</span></a>
+  <a href="/forum/1/blabla-general" data-window-url="/forum/1/blabla-general">${icon('news-32x32',32)}<span>Blabla Général</span></a>
   <hr>
   ${Object.entries(THEMES).map(([id,t])=>`<button id="w${id}" aria-pressed="false">${icon('themes-32x32',32)}<span>${t.name}</span></button>`).join('')}
   <button id="density" aria-pressed="false">${icon('settings-32x32',32)}<span>Liste compacte</span></button>
@@ -333,21 +337,8 @@ return { bindStartMenu };
 
 // Source: src/desktop/status.js
 modules["src/desktop/status.js"] = (() => {
-/** Synchronise le titre du document et l'horloge du bureau. */
-function bindStatus(shadow, onTitleChange = () => {}) {
-  function updateTitle() {
-    const title = document.title || 'Onche';
-    shadow.querySelector('.caption').textContent = `${title} — Internet Explorer`;
-    onTitleChange(title);
-  }
-  updateTitle();
-  const titleNode = document.querySelector('title');
-  if (titleNode) {
-    new MutationObserver(updateTitle).observe(titleNode, {
-      childList: true, characterData: true, subtree: true,
-    });
-  }
-
+/** Synchronise l’horloge de la barre des tâches. */
+function bindClock(shadow) {
   function tick() {
     const now = new Date();
     const clock = shadow.querySelector('time');
@@ -359,16 +350,11 @@ function bindStatus(shadow, onTitleChange = () => {}) {
   setInterval(tick, 30000);
 }
 
-return { bindStatus };
+return { bindClock };
 })();
 
 // Source: src/desktop/topic-tabs.js
 modules["src/desktop/topic-tabs.js"] = (() => {
-const { icon } = modules["src/icons/assets.js"];
-
-const STORAGE_KEY = 'onche-retro-topic-tabs';
-const MAX_TOPICS = 20;
-
 /** Retourne l'identifiant d'un topic Onche, ou null pour une autre page. */
 function topicId(url, base = 'https://onche.org') {
   try {
@@ -380,129 +366,422 @@ function topicId(url, base = 'https://onche.org') {
   }
 }
 
-/** Place le topic actif en tête sans créer de doublon. */
-function rememberTopic(tasks, topic, limit = MAX_TOPICS) {
-  return [topic, ...tasks.filter(item => item.id !== topic.id)].slice(0, limit);
-}
+return { topicId };
+})();
 
-/** Retire un topic de la liste des tâches. */
-function forgetTopic(tasks, id) {
-  return tasks.filter(item => item.id !== id);
-}
+// Source: src/desktop/window-manager.js
+modules["src/desktop/window-manager.js"] = (() => {
+const { icon } = modules["src/icons/assets.js"];
+const { topicId } = modules["src/desktop/topic-tabs.js"];
 
-function cleanTitle(title, id) {
-  return String(title || `Topic ${id}`).replace(/\s+[—|-]\s+Onche.*$/i, '').trim() || `Topic ${id}`;
-}
+const STORAGE_KEY = 'onche-retro-windows';
+const MAX_WINDOWS = 8;
+const DEFAULT_FORUM = '/forum/1/blabla-general';
 
-function readTasks(storage) {
+function oncheURL(url, base = 'https://onche.org') {
   try {
-    const value = JSON.parse(storage.getItem(STORAGE_KEY) || '[]');
-    return Array.isArray(value) ? value.filter(item => item && topicId(item.url) === item.id) : [];
+    const target = new URL(url, base);
+    if (!/^https?:$/.test(target.protocol) || !/^(?:www\.)?onche\.org$/i.test(target.hostname)) return null;
+    return target;
+  } catch {
+    return null;
+  }
+}
+
+/** Identifiant stable : changer de page dans un topic ne crée pas une autre fenêtre. */
+function windowId(url, base = 'https://onche.org') {
+  const target = oncheURL(url, base);
+  if (!target) return null;
+  const topic = topicId(target.href);
+  if (topic) return `topic:${topic}`;
+  const forum = target.pathname.match(/^\/forum\/(\d+)(?:\/|$)/)?.[1];
+  if (forum) return `forum:${forum}`;
+  return `page:${target.pathname.replace(/\/$/, '') || '/'}`;
+}
+
+/** Ajoute une fenêtre à la fin ou la met à jour sans changer son ordre. */
+function upsertWindow(windows, next, limit = MAX_WINDOWS) {
+  const index = windows.findIndex(item => item.id === next.id);
+  if (index < 0) return windows.length >= limit ? windows : [...windows, next];
+  return windows.map((item, itemIndex) => itemIndex === index ? { ...item, ...next } : item);
+}
+
+function removeWindow(windows, id) {
+  return windows.filter(item => item.id !== id);
+}
+
+function clampPosition(value, size, boundary) {
+  return Math.max(0, Math.min(Number(value) || 0, Math.max(0, boundary - size)));
+}
+
+function cleanTitle(title, fallback = 'Onche') {
+  return String(title || fallback).replace(/\s+[—|-]\s+Onche.*$/i, '').trim() || fallback;
+}
+
+function readWindows(storage, origin) {
+  try {
+    const saved = JSON.parse(storage.getItem(STORAGE_KEY) || '[]');
+    if (!Array.isArray(saved)) return [];
+    return saved.slice(0, MAX_WINDOWS).flatMap(item => {
+      const target = item && oncheURL(item.url, origin);
+      const id = target && windowId(target.href, origin);
+      if (!id || id !== item.id) return [];
+      target.protocol = new URL(origin).protocol;
+      target.host = new URL(origin).host;
+      return [{
+        id,
+        url: target.href,
+        title: cleanTitle(item.title, id.startsWith('forum:') ? 'Liste des topics' : 'Onche'),
+        x: Number(item.x) || 0,
+        y: Number(item.y) || 0,
+        width: Number(item.width) || 0,
+        height: Number(item.height) || 0,
+        minimized: Boolean(item.minimized),
+        z: Number(item.z) || 1,
+      }];
+    });
   } catch {
     return [];
   }
 }
 
-function writeTasks(storage, tasks) {
-  try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  } catch {
-    // La navigation reste utilisable même si le stockage est bloqué.
-  }
-}
-
-/** Gère les boutons de topics de la barre des tâches pour cet onglet navigateur. */
-class TopicTabs {
+/** Bureau de fenêtres iframe de même origine, reliées à la barre des tâches. */
+class WindowManager {
   constructor(shadow, options = {}) {
-    this.container = shadow.querySelector('.tasks');
-    this.storage = options.storage || window.sessionStorage;
-    this.navigate = options.navigate || (url => window.location.assign(url));
-    this.href = options.href || window.location.href;
-    this.currentId = topicId(this.href, window.location.origin);
-    this.pageTitle = document.title || 'Onche';
-    this.tasks = readTasks(this.storage);
-    if (this.currentId) {
-      this.tasks = rememberTopic(this.tasks, {
-        id: this.currentId,
-        url: this.href,
-        title: cleanTitle(this.pageTitle, this.currentId),
-      });
-      writeTasks(this.storage, this.tasks);
-    }
+    this.shadow = shadow;
+    this.workspace = shadow.querySelector('.workspace');
+    this.tasks = shadow.querySelector('.tasks');
+    this.document = options.document || document;
+    this.window = options.window || window;
+    this.storage = options.storage || this.window.sessionStorage;
+    this.origin = options.origin || this.window.location.origin;
+    this.onActivate = options.onActivate || (() => {});
+    this.elements = new Map();
+    this.resizeObservers = new Map();
+    this.records = readWindows(this.storage, this.origin);
+    this.activeId = null;
+    this.z = Math.max(1, ...this.records.map(item => item.z));
+    this.themeState = null;
+    this.ensureInitialWindows(options.href || this.window.location.href);
     this.render();
   }
 
-  createButton(task, active) {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = `raised task${active ? ' pressed' : ''}`;
-    button.dataset.topicId = task.id;
-    button.setAttribute('role', 'tab');
-    button.setAttribute('aria-selected', String(active));
-    button.title = task.title;
-    button.insertAdjacentHTML('afterbegin', icon('internet-explorer-16x16'));
-    const label = document.createElement('span');
-    label.className = 'task-label';
-    label.textContent = task.title;
-    button.append(label);
-    button.addEventListener('click', () => {
-      if (active) window.scrollTo({ top: 0, behavior: 'auto' });
-      else this.navigate(task.url);
+  normalize(url) {
+    const target = oncheURL(url, this.origin);
+    if (!target) return null;
+    const current = new URL(this.origin);
+    target.protocol = current.protocol;
+    target.host = current.host;
+    return target;
+  }
+
+  defaultRecord(url, title) {
+    const id = windowId(url, this.origin);
+    const count = this.records.length;
+    const width = Math.min(920, Math.max(320, this.window.innerWidth - 120));
+    const height = Math.min(720, Math.max(280, this.window.innerHeight - 140));
+    return {
+      id,
+      url,
+      title: cleanTitle(title, id.startsWith('forum:') ? 'Liste des topics' : 'Onche'),
+      x: 20 + (count % 6) * 32,
+      y: 18 + (count % 6) * 28,
+      width,
+      height,
+      minimized: false,
+      z: ++this.z,
+    };
+  }
+
+  ensureInitialWindows(href) {
+    const current = this.normalize(href);
+    if (!current) return;
+    const forumURL = current.pathname.startsWith('/forum/')
+      ? current.href
+      : new URL(DEFAULT_FORUM, this.origin).href;
+    const forumId = windowId(forumURL, this.origin);
+    if (!this.records.some(item => item.id === forumId)) {
+      this.records = upsertWindow(this.records, this.defaultRecord(forumURL, 'Liste des topics'));
+    }
+    const currentId = windowId(current.href, this.origin);
+    if (currentId !== forumId) {
+      const existing = this.records.find(item => item.id === currentId);
+      if (existing) existing.url = current.href;
+      else this.records = upsertWindow(this.records, this.defaultRecord(current.href, this.document.title));
+    }
+    const currentRecord = this.records.find(item => item.id === currentId);
+    this.activeId = (currentRecord || this.records[0])?.id || null;
+    if (currentRecord) currentRecord.minimized = false;
+    this.persist();
+  }
+
+  persist() {
+    try {
+      this.storage.setItem(STORAGE_KEY, JSON.stringify(this.records));
+    } catch {
+      // Le bureau reste utilisable si le stockage de session est indisponible.
+    }
+  }
+
+  openURL(url, title = 'Onche') {
+    const target = this.normalize(url);
+    const id = target && windowId(target.href, this.origin);
+    if (!id) return false;
+    const existing = this.records.find(item => item.id === id);
+    if (existing) {
+      this.activate(id);
+      return true;
+    }
+    if (this.records.length >= MAX_WINDOWS) {
+      this.window.alert?.(`Windonche limite le bureau à ${MAX_WINDOWS} fenêtres ouvertes.`);
+      return false;
+    }
+    this.records = upsertWindow(this.records, this.defaultRecord(target.href, title));
+    this.activeId = id;
+    this.onActivate(id);
+    this.persist();
+    this.render();
+    return true;
+  }
+
+  activate(id) {
+    const record = this.records.find(item => item.id === id);
+    if (!record) return;
+    record.minimized = false;
+    record.z = ++this.z;
+    this.activeId = id;
+    this.onActivate(id);
+    this.persist();
+    this.render();
+  }
+
+  minimize(id) {
+    const record = this.records.find(item => item.id === id);
+    if (!record) return;
+    record.minimized = true;
+    if (this.activeId === id) {
+      this.activeId = [...this.records].reverse().find(item => !item.minimized && item.id !== id)?.id || null;
+    }
+    this.persist();
+    this.render();
+  }
+
+  close(id) {
+    const index = this.records.findIndex(item => item.id === id);
+    if (index < 0) return;
+    this.resizeObservers.get(id)?.disconnect();
+    this.resizeObservers.delete(id);
+    this.elements.get(id)?.remove();
+    this.elements.delete(id);
+    this.records = removeWindow(this.records, id);
+    if (this.activeId === id) {
+      const next = this.records[Math.min(index, this.records.length - 1)];
+      this.activeId = next?.id || null;
+      if (next) next.minimized = false;
+    }
+    this.persist();
+    this.render();
+  }
+
+  createWindow(record) {
+    const panel = this.document.createElement('section');
+    panel.className = 'window';
+    panel.dataset.windowId = record.id;
+    panel.tabIndex = -1;
+    panel.innerHTML = `<div class="window-title">${icon('internet-explorer-16x16')}<span class="window-caption"></span><div class="window-controls"><button class="raised minimize" type="button" title="Réduire" aria-label="Réduire">_</button><button class="raised window-close" type="button" title="Fermer" aria-label="Fermer">×</button></div></div><iframe class="window-frame" title=""></iframe>`;
+    const titlebar = panel.querySelector('.window-title');
+    const frame = panel.querySelector('.window-frame');
+    panel.querySelector('.minimize').addEventListener('click', event => {
+      event.stopPropagation();
+      this.minimize(record.id);
     });
-    return button;
+    panel.querySelector('.window-close').addEventListener('click', event => {
+      event.stopPropagation();
+      this.close(record.id);
+    });
+    this.bindDrag(titlebar, panel, record);
+    frame.addEventListener('load', () => this.bindFrame(record, frame));
+    frame.src = record.url;
+    if (this.window.ResizeObserver) {
+      let ready = false;
+      const observer = new this.window.ResizeObserver(() => {
+        if (!ready) { ready = true; return; }
+        if (this.window.matchMedia('(max-width: 700px)').matches) return;
+        record.width = panel.offsetWidth;
+        record.height = panel.offsetHeight;
+        this.persist();
+      });
+      observer.observe(panel);
+      this.resizeObservers.set(record.id, observer);
+    }
+    this.workspace.append(panel);
+    this.elements.set(record.id, panel);
+    return panel;
+  }
+
+  bindDrag(handle, panel, record) {
+    handle.addEventListener('pointerdown', event => {
+      if (event.button !== 0 || event.target.closest('button') || this.window.matchMedia('(max-width: 700px)').matches) return;
+      event.preventDefault();
+      this.activate(record.id);
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const originX = panel.offsetLeft;
+      const originY = panel.offsetTop;
+      handle.setPointerCapture(event.pointerId);
+      const move = moveEvent => {
+        record.x = clampPosition(originX + moveEvent.clientX - startX, panel.offsetWidth, this.workspace.clientWidth);
+        record.y = clampPosition(originY + moveEvent.clientY - startY, panel.offsetHeight, this.workspace.clientHeight);
+        panel.style.left = `${record.x}px`;
+        panel.style.top = `${record.y}px`;
+      };
+      const stop = () => {
+        handle.removeEventListener('pointermove', move);
+        this.persist();
+      };
+      handle.addEventListener('pointermove', move);
+      handle.addEventListener('pointerup', stop, { once: true });
+      handle.addEventListener('pointercancel', stop, { once: true });
+    });
+  }
+
+  bindFrame(record, frame) {
+    try {
+      const frameWindow = frame.contentWindow;
+      const frameDocument = frame.contentDocument;
+      if (!frameWindow || !frameDocument) return;
+      const loadedURL = frameWindow.location.href;
+      const loadedId = windowId(loadedURL, this.origin);
+      if (loadedId && loadedId !== record.id) {
+        const existing = this.records.find(item => item.id === loadedId);
+        if (existing) {
+          this.close(record.id);
+          this.activate(existing.id);
+          return;
+        }
+        const previousId = record.id;
+        const panel = this.elements.get(previousId);
+        const observer = this.resizeObservers.get(previousId);
+        record.id = loadedId;
+        if (this.activeId === previousId) this.activeId = loadedId;
+        this.elements.delete(previousId);
+        this.resizeObservers.delete(previousId);
+        this.elements.set(loadedId, panel);
+        if (observer) this.resizeObservers.set(loadedId, observer);
+        panel.dataset.windowId = loadedId;
+      }
+      record.url = loadedURL;
+      const refreshTitle = () => {
+        record.title = cleanTitle(frameDocument.title, record.title);
+        this.persist();
+        this.renderTasks();
+        this.updateWindow(record);
+      };
+      refreshTitle();
+      const title = frameDocument.querySelector('title');
+      if (title) new MutationObserver(refreshTitle).observe(title, { childList: true, subtree: true });
+      for (const activePage of frameDocument.querySelectorAll('.pagination a.active')) {
+        activePage.setAttribute('aria-current', 'page');
+      }
+      frameDocument.addEventListener('pointerdown', () => this.activate(record.id), true);
+      frameDocument.addEventListener('click', event => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        const anchor = event.target.closest?.('a[href]');
+        if (!anchor || anchor.hasAttribute('download') || anchor.target === '_blank') return;
+        const target = this.normalize(anchor.href);
+        const targetId = target && windowId(target.href, this.origin);
+        if (!targetId) {
+          if (/^https?:/i.test(anchor.href)) {
+            event.preventDefault();
+            this.window.open(anchor.href, '_blank', 'noopener');
+          }
+          return;
+        }
+        if (targetId === record.id) {
+          if (anchor.target === '_top') {
+            event.preventDefault();
+            frameWindow.location.assign(target.href);
+          }
+          return;
+        }
+        event.preventDefault();
+        const label = anchor.matches('.topic-subject') ? anchor.querySelector('span')?.textContent : anchor.textContent;
+        this.openURL(target.href, label);
+      }, true);
+      this.postTheme(frameWindow);
+    } catch {
+      // Une éventuelle navigation externe reste isolée dans sa fenêtre.
+    }
+  }
+
+  updateWindow(record) {
+    const panel = this.elements.get(record.id);
+    if (!panel) return;
+    panel.classList.toggle('active', record.id === this.activeId && !record.minimized);
+    panel.hidden = record.minimized;
+    panel.style.left = `${record.x}px`;
+    panel.style.top = `${record.y}px`;
+    panel.style.width = `${record.width}px`;
+    panel.style.height = `${record.height}px`;
+    panel.style.zIndex = String(record.z);
+    panel.querySelector('.window-caption').textContent = record.title;
+    panel.querySelector('.window-frame').title = record.title;
+  }
+
+  renderTasks() {
+    this.tasks.textContent = '';
+    for (const record of this.records) {
+      const active = record.id === this.activeId && !record.minimized;
+      const button = this.document.createElement('button');
+      button.type = 'button';
+      button.className = `raised task${active ? ' pressed' : ''}`;
+      button.dataset.windowId = record.id;
+      button.setAttribute('role', 'tab');
+      button.setAttribute('aria-selected', String(active));
+      button.title = record.title;
+      button.innerHTML = `${icon('internet-explorer-16x16')}<span class="task-label"></span>`;
+      button.querySelector('.task-label').textContent = record.title;
+      button.addEventListener('click', () => active ? this.minimize(record.id) : this.activate(record.id));
+      this.tasks.append(button);
+    }
   }
 
   render() {
-    this.container.textContent = '';
-    if (!this.tasks.length) {
-      this.container.append(this.createButton({ id: 'page', title: this.pageTitle }, true));
-      return;
+    for (const record of this.records) {
+      if (!this.elements.has(record.id)) this.createWindow(record);
+      this.updateWindow(record);
     }
-    for (const task of this.tasks) {
-      this.container.append(this.createButton(task, task.id === this.currentId));
-    }
+    this.renderTasks();
   }
 
-  updateTitle(title) {
-    this.pageTitle = title || 'Onche';
-    if (this.currentId) {
-      const current = this.tasks.find(task => task.id === this.currentId);
-      if (current) {
-        current.title = cleanTitle(this.pageTitle, this.currentId);
-        current.url = this.href;
-        writeTasks(this.storage, this.tasks);
-      }
-    }
-    this.render();
+  postTheme(target) {
+    if (!this.themeState || !/^https?:/.test(this.origin)) return;
+    target.postMessage({ type: 'onche-retro-theme', state: this.themeState }, this.origin);
   }
 
-  /** Ferme le topic actif et bascule vers le précédent. */
-  closeCurrent() {
-    if (!this.currentId) return false;
-    this.tasks = forgetTopic(this.tasks, this.currentId);
-    writeTasks(this.storage, this.tasks);
-    this.navigate(this.tasks[0]?.url || '/forum/1/blabla-general');
-    return true;
+  setTheme(state) {
+    this.themeState = { enabled: state.enabled, theme: state.theme, compact: state.compact };
+    for (const panel of this.elements.values()) this.postTheme(panel.querySelector('iframe').contentWindow);
   }
 }
 
-function bindTopicTabs(shadow, options) {
-  return new TopicTabs(shadow, options);
+function bindWindowManager(shadow, options) {
+  return new WindowManager(shadow, options);
 }
 
-return { topicId, rememberTopic, forgetTopic, TopicTabs, bindTopicTabs };
+return { windowId, upsertWindow, removeWindow, clampPosition, WindowManager, bindWindowManager };
 })();
 
 // Source: src/styles/desktop.css
-modules["src/styles/desktop.css"] = { default: ":host { all:initial; font:12px var(--w9-font); color:var(--w9-ink); }\n*,*::before,*::after { box-sizing:border-box; border-radius:0!important; }\n.sys-icon { flex:none; object-fit:contain; image-rendering:pixelated; vertical-align:middle; }\nbutton,a { font:inherit; color:inherit; }\nbutton { cursor:pointer; }\n[hidden] { display:none!important; }\n.raised { border:0; border-radius:0; background:var(--w9-face); box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow); }\nbutton:active,.pressed { box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light),inset 2px 2px var(--w9-ink),inset -2px -2px var(--w9-edge); }\nbutton:focus-visible,a:focus-visible { outline:1px dotted var(--w9-ink); outline-offset:-4px; }\n.title { position:fixed; top:0; left:0; right:0; height:28px; z-index:9000; padding:3px; display:flex; align-items:center; gap:6px; background:var(--w9-title); color:var(--w9-selectedText); border:2px solid var(--w9-face); }\n\n.caption { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:bold; }\n.close { width:21px; height:19px; color:var(--w9-ink); font:bold 16px Arial; line-height:16px; padding:0; }\n.taskbar { position:fixed; bottom:0; left:0; right:0; height:36px; padding:4px; display:flex; gap:6px; align-items:stretch; background:var(--w9-face); box-shadow:inset 0 1px var(--w9-surface),inset 0 2px var(--w9-edge); z-index:9000; }\n.start { display:flex; align-items:center; gap:4px; padding:3px 8px 3px 3px; font-weight:bold; }\n.separator { width:2px; border-left:1px solid var(--w9-shadow); border-right:1px solid var(--w9-surface); margin:1px; }\n.tasks { flex:1; min-width:0; display:flex; align-items:stretch; gap:4px; overflow-x:auto; scrollbar-width:thin; }\n.task { text-align:left; flex:1 1 180px; max-width:260px; min-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 8px; font-weight:bold; background:var(--w9-edge); display:flex; align-items:center; gap:6px; }\n.task-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.tray { margin-left:auto; display:flex; align-items:center; padding:0 9px; gap:10px; box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light); white-space:nowrap; }\n.menu { position:fixed; bottom:35px; left:3px; width:270px; max-width:calc(100vw - 6px); max-height:calc(100dvh - 44px); overflow-y:auto; padding:3px; z-index:9001; display:flex; box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow),2px 2px var(--w9-shadow); background:var(--w9-face); }\n.brand { writing-mode:vertical-rl; transform:rotate(180deg); background:var(--w9-selected); color:var(--w9-selectedText); padding:10px 5px; font-size:21px; font-weight:bold; letter-spacing:-1px; }\n.items { flex:1; padding:3px; }\n.items a,.items button { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:0; border-radius:0; background:transparent; box-shadow:none; padding:7px 8px; min-height:40px; text-decoration:none; }\n.items a:hover,.items button:hover,.items a:focus-visible,.items button:focus-visible { background:var(--w9-selected); color:var(--w9-selectedText); outline:none; }\n.items hr { border:0; border-top:1px solid var(--w9-shadow); border-bottom:1px solid var(--w9-surface); margin:4px 2px; }\n.restore { position:fixed; bottom:8px; left:8px; z-index:9000; padding:8px 12px; }\n@media(max-width:500px) { .task { flex-basis:100px; min-width:80px; } .tray .network { display:none; } }\n" };
+modules["src/styles/desktop.css"] = { default: ":host { all:initial; font:12px var(--w9-font); color:var(--w9-ink); }\n*,*::before,*::after { box-sizing:border-box; border-radius:0!important; }\n.sys-icon { flex:none; object-fit:contain; image-rendering:pixelated; vertical-align:middle; }\nbutton,a { font:inherit; color:inherit; }\nbutton { cursor:pointer; }\n[hidden] { display:none!important; }\n.raised { border:0; border-radius:0; background:var(--w9-face); box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow); }\nbutton:active,.pressed { box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light),inset 2px 2px var(--w9-ink),inset -2px -2px var(--w9-edge); }\nbutton:focus-visible,a:focus-visible { outline:1px dotted var(--w9-ink); outline-offset:-4px; }\n.workspace { position:fixed; inset:0 0 36px; overflow:hidden; background:var(--w9-desktop,#008080); z-index:8998; }\n.window { position:absolute; min-width:300px; min-height:220px; padding:3px; display:flex; flex-direction:column; overflow:hidden; resize:both; background:var(--w9-face); box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow),3px 3px rgba(0,0,0,.35); }\n.window-title { height:25px; flex:none; padding:3px 3px 3px 5px; display:flex; align-items:center; gap:5px; overflow:hidden; cursor:move; touch-action:none; background:var(--w9-face); color:var(--w9-ink); font-weight:bold; user-select:none; }\n.window.active .window-title { background:var(--w9-title); color:var(--w9-selectedText); }\n.window-caption { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.window-controls { flex:none; display:flex; gap:2px; }\n.window-controls button { width:21px; height:19px; color:var(--w9-ink); font:bold 16px Arial; line-height:15px; padding:0; }\n.window-controls .minimize { line-height:10px; }\n.window-frame { flex:1; width:100%; min-height:0; border:0; background:var(--w9-surface,#fff); box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light); }\n.taskbar { position:fixed; bottom:0; left:0; right:0; height:36px; padding:4px; display:flex; gap:6px; align-items:stretch; background:var(--w9-face); box-shadow:inset 0 1px var(--w9-surface),inset 0 2px var(--w9-edge); z-index:9000; }\n.start { display:flex; align-items:center; gap:4px; padding:3px 8px 3px 3px; font-weight:bold; }\n.separator { width:2px; border-left:1px solid var(--w9-shadow); border-right:1px solid var(--w9-surface); margin:1px; }\n.tasks { flex:1; min-width:0; display:flex; align-items:stretch; gap:4px; overflow-x:auto; scrollbar-width:thin; }\n.task { text-align:left; flex:1 1 180px; max-width:260px; min-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 8px; font-weight:bold; background:var(--w9-edge); display:flex; align-items:center; gap:6px; }\n.task-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }\n.tray { margin-left:auto; display:flex; align-items:center; padding:0 9px; gap:10px; box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light); white-space:nowrap; }\n.menu { position:fixed; bottom:35px; left:3px; width:270px; max-width:calc(100vw - 6px); max-height:calc(100dvh - 44px); overflow-y:auto; padding:3px; z-index:9002; display:flex; box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow),2px 2px var(--w9-shadow); background:var(--w9-face); }\n.brand { writing-mode:vertical-rl; transform:rotate(180deg); background:var(--w9-selected); color:var(--w9-selectedText); padding:10px 5px; font-size:21px; font-weight:bold; letter-spacing:-1px; }\n.items { flex:1; padding:3px; }\n.items a,.items button { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:0; border-radius:0; background:transparent; box-shadow:none; padding:7px 8px; min-height:40px; text-decoration:none; }\n.items a:hover,.items button:hover,.items a:focus-visible,.items button:focus-visible { background:var(--w9-selected); color:var(--w9-selectedText); outline:none; }\n.items hr { border:0; border-top:1px solid var(--w9-shadow); border-bottom:1px solid var(--w9-surface); margin:4px 2px; }\n.restore { position:fixed; bottom:8px; left:8px; z-index:9003; padding:8px 12px; }\n@media(max-width:700px) {\n  .window { inset:4px!important; width:auto!important; height:auto!important; min-width:0; min-height:0; resize:none; }\n  .window:not(.active) { display:none; }\n  .window-title { cursor:default; }\n  .task { flex-basis:100px; min-width:80px; }\n  .tray .network { display:none; }\n}\n" };
 
 // Source: src/desktop/mount.js
 modules["src/desktop/mount.js"] = (() => {
 const { THEMES } = modules["src/themes/registry.js"];
 const { renderDesktop } = modules["src/desktop/template.js"];
 const { bindStartMenu } = modules["src/desktop/menu.js"];
-const { bindStatus } = modules["src/desktop/status.js"];
-const { bindTopicTabs } = modules["src/desktop/topic-tabs.js"];
+const { bindClock } = modules["src/desktop/status.js"];
+const { bindWindowManager } = modules["src/desktop/window-manager.js"];
 const { default: desktopCSS } = modules["src/styles/desktop.css"];
 
 /** Crée le bureau isolé du CSS d'Onche et relie ses commandes au moteur. */
@@ -517,25 +796,23 @@ function mountDesktop(engine) {
   document.body.append(host);
   const select = selector => shadow.querySelector(selector);
   const menu = bindStartMenu(shadow, host);
-  const topics = bindTopicTabs(shadow);
+  const windows = bindWindowManager(shadow, { onActivate: () => menu.close() });
 
   function apply(patch = {}) {
     engine.update(patch);
     const { enabled, theme, compact } = engine.state;
-    select('.title').hidden = !enabled;
+    document.documentElement.toggleAttribute('data-onche-windowed', enabled);
+    select('.workspace').hidden = !enabled;
     select('.taskbar').hidden = !enabled;
     select('.restore').hidden = enabled;
-    select('.title').dataset.version = theme;
     select('.brand').textContent = THEMES[theme].name;
-    const close = select('.close');
-    close.title = topics.currentId ? 'Fermer ce topic' : 'Rétablir l’apparence d’origine';
-    close.setAttribute('aria-label', topics.currentId ? 'Fermer ce topic' : 'Désactiver le thème Windows');
     for (const [id, definition] of Object.entries(THEMES)) {
       select(`#w${id} span`).textContent = `${theme === id ? '✓' : '○'}  ${definition.name}`;
       select(`#w${id}`).setAttribute('aria-pressed', String(theme === id));
     }
     select('#density span').textContent = `${compact ? '✓' : '○'}  Liste compacte`;
     select('#density').setAttribute('aria-pressed', String(compact));
+    windows.setTheme(engine.state);
     menu.close();
   }
 
@@ -555,11 +832,15 @@ function mountDesktop(engine) {
     menu.start.focus();
   });
   select('#disable').addEventListener('click', () => setEnabled(false));
-  select('.close').addEventListener('click', () => {
-    if (!topics.closeCurrent()) setEnabled(false);
-  });
   select('.restore').addEventListener('click', () => setEnabled(true));
-  bindStatus(shadow, title => topics.updateTitle(title));
+  for (const link of shadow.querySelectorAll('[data-window-url]')) {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      windows.openURL(link.dataset.windowUrl, link.textContent);
+      menu.close();
+    });
+  }
+  bindClock(shadow);
   if (typeof GM_registerMenuCommand === 'function') {
     GM_registerMenuCommand('Activer / désactiver Windows 95/98', () => setEnabled(!engine.state.enabled));
   }
@@ -577,12 +858,21 @@ const { installStyles } = modules["src/styles/install.js"];
 const { installSiteIcons } = modules["src/icons/site-icons.js"];
 const { mountDesktop } = modules["src/desktop/mount.js"];
 
-// Un seul bureau, uniquement dans la fenêtre principale.
-if (window.top === window.self && !document.getElementById('onche-retro-desktop')) {
+// Les iframes reçoivent le thème, mais seul le document principal crée le bureau.
+if (!document.getElementById('onche-retro-tokens')) {
   const engine = new ThemeEngine(THEMES);
   installStyles(engine);
   installSiteIcons(engine);
-  mountDesktop(engine);
+  if (window.top === window.self) {
+    if (!document.getElementById('onche-retro-desktop')) mountDesktop(engine);
+  } else {
+    document.documentElement.setAttribute('data-onche-frame', '');
+    engine.update();
+    window.addEventListener('message', event => {
+      if (event.origin !== window.location.origin || event.source !== window.top) return;
+      if (event.data?.type === 'onche-retro-theme') engine.update(event.data.state);
+    });
+  }
 }
 
 return {  };
