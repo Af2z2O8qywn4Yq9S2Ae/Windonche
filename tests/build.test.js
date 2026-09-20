@@ -37,6 +37,22 @@ test('bibliothèque locale complète et icônes utilisées présentes', async ()
   for (const filename of referenced) assert.ok(files.has(filename), `${filename} absent de assets/icons`);
 });
 
+
+test('les commandes visibles du site ont un équivalent Windows', async () => {
+  const siteIcons = await read('src/icons/site-icons.js');
+  for (const iconClass of [
+    'mdi-bell',
+    'mdi-incognito',
+    'mdi-dots-vertical',
+    'mdi-refresh',
+    'mdi-plus',
+    'mdi-paperclip',
+    'mdi-microphone',
+    'mdi-emoticon-plus-outline',
+    'mdi-send'
+  ]) assert.ok(siteIcons.includes(`.${iconClass}`), `${iconClass} sans correspondance`);
+});
+
 test('extraction CSS sans changement de cascade ou de règles', async () => {
   const original = await read('tests/fixtures/original.user.js');
   const expected = original.match(/engine.use\('components', `\n([\s\S]*?)\n`\);/)[1]
