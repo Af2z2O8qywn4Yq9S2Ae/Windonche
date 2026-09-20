@@ -31,7 +31,7 @@ test('bibliothèque locale complète et icônes utilisées présentes', async ()
     'src/desktop/template.js'
   ].map(read));
   const referenced = sources.flatMap(source =>
-    [...source.matchAll(/icon(?:URL)?\\('([^']+)'/g)].map(match => `${match[1]}.png`)
+    [...source.matchAll(/icon(?:URL)?\('([^']+)'/g)].map(match => `${match[1]}.png`)
   );
   assert.ok(referenced.length > 0);
   for (const filename of referenced) assert.ok(files.has(filename), `${filename} absent de assets/icons`);
@@ -53,7 +53,7 @@ test('les commandes visibles du site ont un équivalent Windows', async () => {
   ]) assert.ok(siteIcons.includes(`.${iconClass}`), `${iconClass} sans correspondance`);
 });
 
-test('extraction CSS sans changement de cascade ou de règles', async () => {
+test('extraction CSS du forum sans changement de cascade ou de règles', async () => {
   const original = await read('tests/fixtures/original.user.js');
   const expected = original.match(/engine.use\('components', `\n([\s\S]*?)\n`\);/)[1]
     .replace("${iconURL('internet-explorer-16x16')}", '__BROWSER_ICON_URL__');
@@ -62,8 +62,14 @@ test('extraction CSS sans changement de cascade ou de règles', async () => {
   assert.equal(normalize(parts.join('\n')), normalize(expected));
   const adapter = original.match(/engine.use\('onche-adapter', `\n([\s\S]*?)\n`\);/)[1];
   assert.equal(normalize(await read('src/styles/onche-adapter.css')), normalize(adapter));
-  const desktop = original.match(/<style>\n([\s\S]*?)\n<\/style>/)[1];
-  assert.equal(normalize(await read('src/styles/desktop.css')), normalize(desktop));
+});
+
+test('le bureau conserve ses composants et prévoit plusieurs tâches', async () => {
+  const desktop = await read('src/styles/desktop.css');
+  for (const selector of ['.title', '.close', '.taskbar', '.start', '.tasks', '.task', '.tray', '.menu']) {
+    assert.ok(desktop.includes(selector), `${selector} absent du bureau`);
+  }
+  assert.match(desktop, /\.tasks\s*\{[^}]*overflow-x:auto/);
 });
 
 test('assembleur : portées isolées, CSS littéral, cycles et imports externes refusés', async () => {

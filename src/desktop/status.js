@@ -1,9 +1,9 @@
 /** Synchronise le titre du document et l'horloge du bureau. */
-export function bindStatus(shadow) {
+export function bindStatus(shadow, onTitleChange = () => {}) {
   function updateTitle() {
     const title = document.title || 'Onche';
     shadow.querySelector('.caption').textContent = `${title} — Internet Explorer`;
-    shadow.querySelector('.task-label').textContent = title;
+    onTitleChange(title);
   }
   updateTitle();
   const titleNode = document.querySelector('title');

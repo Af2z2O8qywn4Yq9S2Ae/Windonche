@@ -33,13 +33,16 @@ try {
     }
     // Comparaison visuelle de la sortie générée et de l'original sur la même fixture.
     await load(original);
-    // Masquer l'horloge rend la comparaison indépendante d'un changement de minute.
-    const baseline = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop time')] });
+    // Le bureau possède désormais ses propres tests fonctionnels : on compare ici
+    // uniquement le rendu du forum, sans rendre la référence obsolète à chaque ajout.
+    const baseline = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop')] });
     await load(script);
-    const current = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop time')] });
+    const current = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop')] });
     assert.ok(baseline.equals(current), `Régression visuelle à ${width}px`);
     const desktop = page.locator('#onche-retro-desktop');
     const start = desktop.locator('.start');
+    assert.equal(await desktop.locator('.task').count(), 1);
+    assert.equal(await desktop.locator('.task').getAttribute('aria-selected'), 'true');
     const focusClass = () => page.evaluate(() => document.querySelector('#onche-retro-desktop').shadowRoot.activeElement?.className);
     await start.click();
     assert.equal(await start.getAttribute('aria-expanded'), 'true');
