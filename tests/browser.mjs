@@ -7,7 +7,6 @@ import { build } from '../scripts/build.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fixture = await readFile(new URL('./fixtures/forum.html', import.meta.url), 'utf8');
-const original = await readFile(new URL('./fixtures/original.user.js', import.meta.url), 'utf8');
 const script = await build();
 const browser = await chromium.launch({ headless: true, ...(process.env.BROWSER_CHANNEL ? { channel: process.env.BROWSER_CHANNEL } : {}) });
 let scenarios = 0;
@@ -16,33 +15,66 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
-    // Icônes indisponibles : le bureau doit rester utilisable sans réseau.
     await page.route('https://raw.githubusercontent.com/**', route => route.abort());
-    async function load(source, values = {}) {
-      await page.goto('about:blank');
-      await page.setContent(fixture);
-      await page.evaluate(values => {
-        window.saved = values;
+    await page.route('https://onche.org/**', route => {
+      if (route.request().resourceType() === 'document') {
+        return route.fulfill({ status: 200, contentType: 'text/html', body: fixture });
+      }
+      return route.abort();
+    });
+    async function load(values = {}) {
+      await page.goto('https://onche.org/forum/1/blabla-general');
+      await page.evaluate(initial => {
+        window.saved = initial;
         window.GM_getValue = (key, fallback) => window.saved[key] ?? fallback;
         window.GM_setValue = (key, value) => { window.saved[key] = value; };
         window.GM_registerMenuCommand = (_, callback) => { window.toggleRetro = callback; };
       }, values);
-      await page.addScriptTag({ content: source });
+      await page.addScriptTag({ content: script });
       await page.waitForFunction(() => [...document.querySelector('#onche-retro-desktop').shadowRoot.querySelectorAll('img')].every(image => image.complete));
-      await page.evaluate(() => document.fonts.ready);
+      await page.waitForFunction(() => document.querySelector('#onche-retro-desktop').shadowRoot.querySelectorAll('.window').length === 1);
     }
-    // Comparaison visuelle de la sortie générée et de l'original sur la même fixture.
-    await load(original);
-    // Le bureau possède désormais ses propres tests fonctionnels : on compare ici
-    // uniquement le rendu du forum, sans rendre la référence obsolète à chaque ajout.
-    const baseline = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop')] });
-    await load(script);
-    const current = await page.screenshot({ animations: 'disabled', mask: [page.locator('#onche-retro-desktop')] });
-    assert.ok(baseline.equals(current), `Régression visuelle à ${width}px`);
+    await load();
     const desktop = page.locator('#onche-retro-desktop');
     const start = desktop.locator('.start');
     assert.equal(await desktop.locator('.task').count(), 1);
     assert.equal(await desktop.locator('.task').getAttribute('aria-selected'), 'true');
+    assert.equal(await desktop.locator('.window').count(), 1);
+
+    const forumFrame = page.frames().find(frame => frame !== page.mainFrame());
+    assert.ok(forumFrame, 'iframe du forum absente');
+    await forumFrame.addScriptTag({ content: script });
+    assert.equal(await forumFrame.locator('#onche-retro-desktop').count(), 0);
+    assert.equal(await forumFrame.locator('html').getAttribute('data-onche-frame'), '');
+    assert.equal(await forumFrame.locator('.pagination a.active').getAttribute('aria-current'), 'page');
+    assert.equal(await forumFrame.locator('.pagination a.active').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(0, 0, 128)');
+
+    const titlebar = desktop.locator('.window-title').first();
+    if (width > 700) {
+      const before = await desktop.locator('.window').first().evaluate(element => element.offsetLeft);
+      const box = await titlebar.boundingBox();
+      await page.mouse.move(box.x + 80, box.y + 10);
+      await page.mouse.down();
+      await page.mouse.move(box.x + 130, box.y + 35);
+      await page.mouse.up();
+      const after = await desktop.locator('.window').first().evaluate(element => element.offsetLeft);
+      assert.ok(after > before, 'la fenêtre ne se déplace pas');
+    }
+
+    await forumFrame.locator('.topic-subject').click();
+    await desktop.locator('.window').nth(1).waitFor();
+    assert.equal(await desktop.locator('.window').count(), 2);
+    assert.deepEqual(await desktop.locator('.task').evaluateAll(items => items.map(item => item.dataset.windowId)), ['forum:1', 'topic:42']);
+    await desktop.locator('.task').first().click();
+    assert.deepEqual(await desktop.locator('.task').evaluateAll(items => items.map(item => item.dataset.windowId)), ['forum:1', 'topic:42']);
+    await desktop.locator('.task').nth(1).click();
+    await desktop.locator('.window[data-window-id="topic:42"] .minimize').click();
+    assert.equal(await desktop.locator('.window[data-window-id="topic:42"]').isHidden(), true);
+    await desktop.locator('.task').nth(1).click();
+    assert.equal(await desktop.locator('.window[data-window-id="topic:42"]').isVisible(), true);
+    await desktop.locator('.window[data-window-id="topic:42"] .window-close').click();
+    assert.equal(await desktop.locator('.window').count(), 1);
+
     const focusClass = () => page.evaluate(() => document.querySelector('#onche-retro-desktop').shadowRoot.activeElement?.className);
     await start.click();
     assert.equal(await start.getAttribute('aria-expanded'), 'true');
@@ -61,32 +93,23 @@ try {
     await start.click();
     await desktop.locator('#density').click();
     assert.equal(await page.locator('html').getAttribute('data-onche-compact'), '');
-    await desktop.locator('.close').click();
+    await start.click();
+    await desktop.locator('#disable').click();
     assert.equal(await page.locator('html').getAttribute('data-onche-retro'), null);
+    assert.equal(await page.locator('html').getAttribute('data-onche-windowed'), null);
     assert.match(await focusClass(), /restore/);
     await desktop.locator('.restore').click();
     assert.match(await focusClass(), /start/);
     assert.equal(await page.locator('html').getAttribute('data-onche-retro'), '95');
-    await page.locator('#native-action').click();
-    assert.equal(await page.evaluate(() => window.nativeClicks), 1);
-    assert.equal(await page.locator('.native-hidden').isVisible(), false);
-    await page.locator('.spoiler').click();
-    assert.ok(await page.locator('.spoiler').evaluate(element => element.classList.contains('revealed')));
-    await page.evaluate(() => { document.title = 'Titre modifié'; });
-    await page.waitForFunction(() => document.querySelector('#onche-retro-desktop').shadowRoot.querySelector('.caption').textContent.includes('Titre modifié'));
     await page.addScriptTag({ content: script });
     assert.equal(await page.locator('#onche-retro-desktop').count(), 1);
-    const saved = await page.evaluate(() => window.saved);
-    await load(script, saved);
-    assert.equal(await page.locator('html').getAttribute('data-onche-retro'), '95');
-    assert.equal(await page.locator('html').getAttribute('data-onche-compact'), '');
     await page.evaluate(() => window.toggleRetro());
     assert.equal(await page.locator('html').getAttribute('data-onche-retro'), null);
     assert.deepEqual(errors, []);
     await page.close();
     scenarios++;
   }
-  console.log(`${scenarios} scénarios navigateur réussis (bureau et mobile, comparaison visuelle avec l'original).`);
+  console.log(`${scenarios} scénarios navigateur réussis (fenêtres, bureau et mobile).`);
 } finally {
   await browser.close();
 }

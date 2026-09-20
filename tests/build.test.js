@@ -15,6 +15,7 @@ test('build reproductible, autonome, un seul en-tête Onche', async () => {
   assert.equal(await build(), first);
   assert.equal((first.match(/==UserScript==/g) || []).length, 1);
   assert.ok(first.includes('// @match        https://onche.org/*'));
+  assert.ok(!first.includes('// @noframes'));
   assert.ok(!first.includes('chatgpt.com'));
   assert.ok(first.includes('raw.githubusercontent.com/Af2z2O8qywn4Yq9S2Ae/Windonche/main/assets/icons/'));
   assert.ok(!first.includes('98.js.org/images/icons/'));
@@ -28,7 +29,8 @@ test('bibliothèque locale complète et icônes utilisées présentes', async ()
   const sources = await Promise.all([
     'src/icons/site-icons.js',
     'src/styles/install.js',
-    'src/desktop/template.js'
+    'src/desktop/template.js',
+    'src/desktop/window-manager.js'
   ].map(read));
   const referenced = sources.flatMap(source =>
     [...source.matchAll(/icon(?:URL)?\('([^']+)'/g)].map(match => `${match[1]}.png`)
@@ -64,12 +66,13 @@ test('extraction CSS du forum sans changement de cascade ou de règles', async (
   assert.equal(normalize(await read('src/styles/onche-adapter.css')), normalize(adapter));
 });
 
-test('le bureau conserve ses composants et prévoit plusieurs tâches', async () => {
+test('le bureau possède fenêtres, tâches et pagination active', async () => {
   const desktop = await read('src/styles/desktop.css');
-  for (const selector of ['.title', '.close', '.taskbar', '.start', '.tasks', '.task', '.tray', '.menu']) {
+  for (const selector of ['.workspace', '.window', '.window-title', '.window-frame', '.taskbar', '.start', '.tasks', '.task', '.tray', '.menu']) {
     assert.ok(desktop.includes(selector), `${selector} absent du bureau`);
   }
   assert.match(desktop, /\.tasks\s*\{[^}]*overflow-x:auto/);
+  assert.match(await read('src/styles/windowed.css'), /pagination[\s\S]*aria-current="page"/);
 });
 
 test('assembleur : portées isolées, CSS littéral, cycles et imports externes refusés', async () => {

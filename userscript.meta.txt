@@ -1,14 +1,13 @@
 // ==UserScript==
 // @name         Onche — Windows 95 / 98
 // @namespace    local.onche.windows-retro
-// @version      2.3.0
-// @description  Thèmes Windows 95/98 pour Onche avec barre des tâches multi-topics et bibliothèque d'icônes auto-hébergée.
+// @version      2.4.0
+// @description  Bureau Windows 95/98 pour Onche avec fenêtres de topics déplaçables et icônes auto-hébergées.
 // @match        https://onche.org/*
 // @match        https://www.onche.org/*
 // @run-at       document-end
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
-// @noframes
 // @license      MIT
 // ==/UserScript==

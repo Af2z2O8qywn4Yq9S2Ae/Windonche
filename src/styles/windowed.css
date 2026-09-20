@@ -1,0 +1,16 @@
+html[data-onche-windowed] body { overflow:hidden!important; }
+html[data-onche-windowed] body > :not(#onche-retro-desktop) { display:none!important; }
+
+/* Dans une fenêtre, le site conserve son fonctionnement sans le chrome global. */
+html[data-onche-frame][data-onche-retro] body { padding-bottom:0!important; }
+html[data-onche-frame][data-onche-retro] body > header { top:0!important; }
+html[data-onche-frame][data-onche-retro] #content { padding-top:60px!important; }
+html[data-onche-frame][data-onche-retro] body.sticky-right #content #right { top:56px!important; }
+
+/* La page courante doit rester évidente parmi plusieurs dizaines de pages. */
+html[data-onche-retro] body #content .pagination > a.active,
+html[data-onche-retro] body #content .pagination > a[aria-current="page"] {
+  background:var(--w9-selected)!important; color:var(--w9-selectedText)!important;
+  box-shadow:var(--w9-sunken)!important; outline:1px dotted var(--w9-selectedText)!important;
+  outline-offset:-4px; font-weight:700!important;
+}
