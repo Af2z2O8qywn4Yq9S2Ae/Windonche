@@ -1,0 +1,49 @@
+/* Finishing: editor, account menu, dialogs, picker and profile cards. */
+html[data-onche-retro] :is(.composer__card,#menu,#confirmation_content,.media-picker,.profileCard,.clubCard,.mention-ac) {
+  --menu-bg:var(--w9-face)!important; background:var(--w9-face)!important; color:var(--w9-ink)!important;
+  border:0!important; box-shadow:var(--w9-raised)!important;
+}
+html[data-onche-retro] :is(.composer__card,.media-picker) { padding:3px!important; }
+html[data-onche-retro] :is(.composer__toolbar,.composer__staff,.composer__edit-actions,.menu__footer,.menu__primary,.media-picker__tools) { background:var(--w9-face)!important; color:var(--w9-ink)!important; }
+html[data-onche-retro] :is(.composer__toolbar,.media-picker__tools) { border-top:1px solid var(--w9-surface)!important; border-bottom:1px solid var(--w9-shadow)!important; }
+html[data-onche-retro] .composer__textarea { margin:3px 0!important; }
+html[data-onche-retro] :is(.menu__header,.media-picker__head) { background:var(--w9-title)!important; color:var(--w9-selectedText)!important; }
+html[data-onche-retro] :is(.menu__header,.media-picker__head) :is(a,span,div,h2,h3) { color:var(--w9-selectedText)!important; }
+html[data-onche-retro] :is(.menu__item,.menu__section-title,.menu__cta,.menu__level,.media-picker__label,.media-picker__name,.profileCard,.clubCard) { color:var(--w9-ink)!important; }
+html[data-onche-retro] .menu__cta { background:var(--w9-face)!important; box-shadow:var(--w9-raised)!important; }
+html[data-onche-retro] .menu__item:hover { color:var(--w9-selectedText)!important; background:var(--w9-selected)!important; }
+html[data-onche-retro] .menu__item:hover * { color:inherit!important; }
+html[data-onche-retro] #confirmation_content span { color:var(--w9-ink)!important; }
+html[data-onche-retro] #toast { bottom:45px!important; background:var(--w9-tip)!important; color:var(--w9-ink)!important; border:1px solid var(--w9-ink)!important; box-shadow:1px 1px var(--w9-ink)!important; }
+html[data-onche-retro] :is(#menu,.profileCard,.clubCard) { transition:none!important; }
+html[data-onche-retro] #menu { top:74px!important; bottom:40px!important; }
+html[data-onche-retro] :is(#confirmation,#media-picker) { padding-top:80px!important; padding-bottom:45px!important; }
+html[data-onche-retro] .sticky-container { top:70px!important; background:var(--w9-face)!important; }
+html[data-onche-retro] .sticky-radius { display:none!important; }
+html[data-onche-retro] .bloc.border::before { display:none!important; }
+html[data-onche-retro] .message-highlighted { outline:2px dotted var(--w9-selected)!important; outline-offset:2px; }
+html[data-onche-retro] :is(.message-op,.topic-forum-pill,.likeButton__reaction) { box-shadow:none!important; }
+html[data-onche-retro] .message-op { border-color:var(--w9-selectedText)!important; }
+html[data-onche-retro] .message-op::before { color:var(--w9-selectedText)!important; }
+html[data-onche-retro] .message.answer .message-op { border-color:var(--w9-shadow)!important; }
+html[data-onche-retro] .message.answer .message-op::before { color:var(--w9-ink)!important; }
+html[data-onche-retro] input:is([type="checkbox"],[type="radio"]) { accent-color:var(--w9-selected); }
+html[data-onche-retro] input[type="radio"] { appearance:none!important; width:13px; height:13px; background:var(--w9-surface); box-shadow:var(--w9-sunken); vertical-align:middle; }
+html[data-onche-retro] input[type="radio"]:checked { background:var(--w9-selected); border:3px solid var(--w9-surface); outline:1px solid var(--w9-shadow); }
+html[data-onche-retro] ::-webkit-scrollbar { width:16px; height:16px; }
+html[data-onche-retro] ::-webkit-scrollbar-track { background:var(--w9-edge); }
+html[data-onche-retro] ::-webkit-scrollbar-thumb { background:var(--w9-face); box-shadow:var(--w9-raised); border-radius:0; }
+html[data-onche-retro] ::-webkit-scrollbar-corner { background:var(--w9-face); }
+@media(max-width:880px) {
+ html[data-onche-retro] #content > .container { width:calc(100% - 12px)!important; }
+ html[data-onche-retro] #content { padding-top:80px!important; }
+ html[data-onche-retro] .messages > .message > .message-content { padding:9px!important; }
+ html[data-onche-retro] body > header .logo .image { width:95px!important; }
+ html[data-onche-retro] body > header .logo .image::after { font-size:14px; }
+}
+@media print {
+ html[data-onche-retro],html[data-onche-retro] body { background:var(--w9-surface)!important; }
+ html[data-onche-retro] body { padding-bottom:0!important; }
+ html[data-onche-retro] #content { padding-top:0!important; }
+ #onche-retro-desktop { display:none!important; }
+}

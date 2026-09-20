@@ -1,0 +1,18 @@
+html[data-onche-retro] .bloc > .topics { background:var(--w9-surface)!important; box-shadow:var(--w9-sunken)!important; padding:2px!important; margin-top:3px; }
+html[data-onche-retro] .topics .topic {
+  background:var(--w9-surface)!important; border-bottom:1px solid var(--w9-edge)!important;
+  border-radius:0!important; transition:none!important;
+}
+html[data-onche-retro] .topics .topic:nth-child(even) { background:var(--w9-stripe)!important; }
+html[data-onche-retro] .topics .topic .topic-subject { color:var(--w9-selected)!important; font-size:14px!important; }
+html[data-onche-retro] .topics .topic .topic-subject:visited { color:var(--w9-visited)!important; }
+html[data-onche-retro] .topics .topic .topic-subject span { font-family:var(--w9-font)!important; }
+html[data-onche-retro] .topics .topic :is(.topic-username,.topic-nb,.right span) { color:var(--w9-muted)!important; }
+html[data-onche-retro] .topics .topic:hover { background:var(--w9-selected)!important; }
+html[data-onche-retro] .topics .topic:hover :is(.topic-subject,.topic-subject span,.topic-username,.topic-username span,.topic-nb,.right span) { color:var(--w9-selectedText)!important; -webkit-text-fill-color:var(--w9-selectedText)!important; background-image:none!important; }
+html[data-onche-retro] .topics .topic::after { background:none!important; animation:none!important; }
+html[data-onche-retro] .topics .topic::before { animation:none!important; }
+html[data-onche-retro] .topics .topic:focus-within { outline:1px dotted var(--w9-selected); outline-offset:-2px; }
+html[data-onche-retro] .topic-left img { border-radius:0!important; }
+html[data-onche-retro][data-onche-compact] .topics .topic .topic-subject { padding-top:4px!important; padding-bottom:4px!important; }
+html[data-onche-retro][data-onche-compact] .topic-username { display:none!important; }
