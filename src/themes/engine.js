@@ -1,5 +1,6 @@
 import { read, write } from '../platform/storage.js';
 import { validateContrast } from './contrast.js';
+import { MODES, applyMode } from './modes.js';
 
 /** Gère la palette, les couches CSS et les préférences, sans connaître le bureau. */
 export class ThemeEngine {
@@ -8,9 +9,11 @@ export class ThemeEngine {
     this.document = documentRef;
     this.root = documentRef.documentElement;
     const storedTheme = read('retro-version', '98');
+    const storedMode = read('retro-mode', 'light');
     this.state = {
       enabled: read('retro-enabled', true) !== false,
       theme: Object.hasOwn(registry, storedTheme) ? storedTheme : '98',
+      mode: Object.hasOwn(MODES, storedMode) ? storedMode : 'light',
       compact: read('retro-compact', false) === true,
     };
     this.layers = new Map();
@@ -36,7 +39,10 @@ export class ThemeEngine {
     if (!Object.hasOwn(this.registry, next.theme)) {
       throw new Error(`Thème inconnu : ${next.theme}`);
     }
-    const theme = this.registry[next.theme];
+    if (!Object.hasOwn(MODES, next.mode)) {
+      throw new Error(`Mode inconnu : ${next.mode}`);
+    }
+    const theme = applyMode(this.registry[next.theme], next.mode);
     validateContrast(theme);
     const variables = Object.entries(theme)
       .filter(([key]) => key !== 'name')
@@ -50,14 +56,18 @@ export class ThemeEngine {
     this.state = next;
     if (next.enabled) this.root.setAttribute('data-onche-retro', next.theme);
     else this.root.removeAttribute('data-onche-retro');
+    if (next.enabled) this.root.setAttribute('data-onche-mode', next.mode);
+    else this.root.removeAttribute('data-onche-mode');
     this.root.toggleAttribute('data-onche-compact', next.enabled && next.compact);
     write('retro-enabled', next.enabled);
     write('retro-version', next.theme);
+    write('retro-mode', next.mode);
     write('retro-compact', next.compact);
   }
 
   destroy() {
     this.root.removeAttribute('data-onche-retro');
+    this.root.removeAttribute('data-onche-mode');
     this.root.removeAttribute('data-onche-compact');
     for (const sheet of this.layers.values()) sheet.remove();
     this.layers.clear();

@@ -387,7 +387,7 @@ export class WindowManager {
   }
 
   setTheme(state) {
-    this.themeState = { enabled: state.enabled, theme: state.theme, compact: state.compact };
+    this.themeState = { enabled: state.enabled, theme: state.theme, mode: state.mode, compact: state.compact };
     for (const panel of this.elements.values()) this.postTheme(panel.querySelector('iframe').contentWindow);
   }
 }

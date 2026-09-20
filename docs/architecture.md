@@ -2,11 +2,12 @@
 
 ## Flux d'exécution
 
-`main.js` empêche les doublons, crée `ThemeEngine`, installe les styles et les icônes, puis monte le bureau dans le document principal. Dans les iframes, il applique seulement le thème et reçoit les changements du parent par `postMessage`. Les interactions du bureau appellent `engine.update(patch)`. Le moteur valide les contrastes avant de changer les attributs HTML, les variables CSS et le stockage.
+`main.js` empêche les doublons, crée `ThemeEngine`, installe les styles et les icônes, puis monte le bureau dans le document principal. Dans les iframes, il applique seulement le thème, adapte la structure si la page est un topic et reçoit les changements du parent par `postMessage`. Les interactions du bureau appellent `engine.update(patch)`. Le moteur fusionne le thème 95/98 avec le mode Clair/Sombre/Noir, valide les contrastes, puis change les attributs HTML, les variables CSS et le stockage.
 
 | Responsabilité | Fichiers à modifier |
 | --- | --- |
 | Couleurs, police, nouveau thème | `src/themes/registry.js` |
+| Palettes Clair, Sombre et Noir | `src/themes/modes.js` |
 | Contrastes et validation | `src/themes/contrast.js` |
 | État, variables CSS, activation | `src/themes/engine.js` |
 | Clés de stockage et repli sans API GM | `src/platform/storage.js` |
@@ -15,19 +16,22 @@
 | Apparence du forum | `src/styles/*.css` |
 | Corrections spécifiques au DOM Onche | `src/styles/onche-adapter.css` |
 | Structure HTML du bureau | `src/desktop/template.js` |
+| Barre compacte et nettoyage d'un topic | `src/desktop/topic-frame.js` |
 | Apparence du bureau isolé | `src/styles/desktop.css` |
-| Commandes, choix du thème, densité | `src/desktop/mount.js` |
+| Commandes, choix du thème, mode et densité | `src/desktop/mount.js` |
 | Fenêtres, iframes, tâches et déplacement | `src/desktop/window-manager.js` |
 | Ouverture, fermeture et clavier | `src/desktop/menu.js` |
 | Horloge | `src/desktop/status.js` |
 
 ## Contrats à préserver
 
-Les noms des variables `--w9-*`, les attributs `data-onche-retro` et `data-onche-compact`, l'identifiant du bureau et les clés `retro-*` sont conservés pour maintenir le comportement existant. Les thèmes `95` et `98` restent disponibles ; `98` est le repli pour une préférence inconnue. Le moteur utilise `Object.hasOwn` pour refuser les propriétés héritées telles que `toString`.
+Les noms des variables `--w9-*`, les attributs `data-onche-retro` et `data-onche-compact`, l'identifiant du bureau et les clés `retro-*` sont conservés pour maintenir le comportement existant. `data-onche-mode` et `retro-mode` sélectionnent Clair, Sombre ou Noir ; Clair est le repli. Les thèmes `95` et `98` restent disponibles ; `98` est le repli pour une préférence inconnue. Le moteur utilise `Object.hasOwn` pour refuser les propriétés héritées telles que `toString`.
 
 Le bureau utilise des liens et boutons natifs, dans une navigation nommée. Ce n'est pas un composant `role="menu"` : Tabulation conserve donc son comportement natif. Les commandes sélectionnées annoncent `aria-pressed`, Démarrer annonce `aria-expanded`, les tâches annoncent `aria-selected` et la page de topic active reçoit `aria-current`. Les images décoratives ont un texte alternatif vide. Le HTML généré est réservé aux constantes du projet ; les titres provenant du site passent par `textContent`.
 
 Les fenêtres sont limitées à huit et stockées dans `sessionStorage`. Un identifiant stable associe toutes les pages d'un topic à la même fenêtre. Un clic provenant d'une iframe ouvre ou active la fenêtre correspondante sans réordonner la barre des tâches. Les iframes sont de même origine et ne montent jamais un second bureau.
+
+Dans une iframe de topic uniquement, `topic-frame.js` déplace les nœuds natifs de pagination et d'actions dans une barre compacte. Il conserve ainsi leurs liens, attributs et écouteurs. Un attribut dédié limite les règles de mise en page à cette iframe : la liste des sujets garde son en-tête et sa colonne latérale.
 
 Désactiver masque le bureau et retire les attributs qui activent le CSS ; le bouton de restauration reste présent. Les écouteurs et l'horloge durent pendant la vie de la page pour permettre la réactivation. `ThemeEngine.destroy()` nettoie seulement le moteur CSS ; ce n'est pas une API de démontage du bureau.
 
