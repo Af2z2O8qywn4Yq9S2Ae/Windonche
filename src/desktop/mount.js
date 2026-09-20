@@ -1,4 +1,5 @@
 import { THEMES } from '../themes/registry.js';
+import { MODES } from '../themes/modes.js';
 import { renderDesktop } from './template.js';
 import { bindStartMenu } from './menu.js';
 import { bindClock } from './status.js';
@@ -21,7 +22,7 @@ export function mountDesktop(engine) {
 
   function apply(patch = {}) {
     engine.update(patch);
-    const { enabled, theme, compact } = engine.state;
+    const { enabled, theme, mode, compact } = engine.state;
     document.documentElement.toggleAttribute('data-onche-windowed', enabled);
     select('.workspace').hidden = !enabled;
     select('.taskbar').hidden = !enabled;
@@ -31,6 +32,8 @@ export function mountDesktop(engine) {
       select(`#w${id} span`).textContent = `${theme === id ? '✓' : '○'}  ${definition.name}`;
       select(`#w${id}`).setAttribute('aria-pressed', String(theme === id));
     }
+    select('#mode span').textContent = `Affichage : ${MODES[mode].name}`;
+    select('#mode').dataset.mode = mode;
     select('#density span').textContent = `${compact ? '✓' : '○'}  Liste compacte`;
     select('#density').setAttribute('aria-pressed', String(compact));
     windows.setTheme(engine.state);
@@ -50,6 +53,11 @@ export function mountDesktop(engine) {
   }
   select('#density').addEventListener('click', () => {
     apply({ compact: !engine.state.compact });
+    menu.start.focus();
+  });
+  select('#mode').addEventListener('click', () => {
+    const modes = Object.keys(MODES);
+    apply({ mode: modes[(modes.indexOf(engine.state.mode) + 1) % modes.length] });
     menu.start.focus();
   });
   select('#disable').addEventListener('click', () => setEnabled(false));

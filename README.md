@@ -1,14 +1,14 @@
 # Windonche
 
-Un userscript qui transforme **Onche** en bureau Windows 95 ou Windows 98 : fenêtres de topics, barre des tâches, menu Démarrer, icônes et liste de sujets compacte.
+Un userscript qui transforme **Onche** en bureau Windows 95 ou Windows 98 : fenêtres de topics, barre des tâches, menu Démarrer, trois modes d'affichage, icônes et liste de sujets compacte.
 
 ## Installer
 
 1. Installer Tampermonkey ou Violentmonkey dans son navigateur.
 2. Ouvrir [`dist/windonche.user.js`](dist/windonche.user.js), puis **Raw** pour l'installer. On peut aussi copier ce fichier dans un nouveau script du gestionnaire.
-3. Recharger Onche. Le bouton **Démarrer** permet de choisir le thème, la densité ou l'apparence d'origine.
+3. Recharger Onche. Le bouton **Démarrer** permet de choisir le thème, la densité, le mode **Clair / Sombre / Noir** ou l'apparence d'origine. Le mode Clair reste sélectionné par défaut.
 
-La liste des topics et chaque sujet s'ouvrent dans des fenêtres indépendantes. Leur barre de titre permet de les déplacer ; les boutons réduisent ou ferment la fenêtre, tandis que la barre des tâches les restaure sans modifier leur ordre. Les pages 1, 2, 3… d'un même topic restent dans la même fenêtre et la page courante est mise en évidence. Le bureau conserve au maximum huit fenêtres dans l'onglet navigateur courant.
+La liste des topics et chaque sujet s'ouvrent dans des fenêtres indépendantes. Leur barre de titre permet de les déplacer ; les boutons réduisent ou ferment la fenêtre, tandis que la barre des tâches les restaure sans modifier leur ordre. Les pages 1, 2, 3… d'un même topic restent dans la même fenêtre et la page courante est mise en évidence. Dans une fenêtre de topic, la colonne latérale et les en-têtes redondants disparaissent : la pagination et les actions natives (favori, actualisation…) occupent une barre compacte et les messages utilisent toute la largeur. La fenêtre de liste conserve sa présentation. Le bureau conserve au maximum huit fenêtres dans l'onglet navigateur courant.
 
 Sur mobile, une seule fenêtre est affichée à la fois et le déplacement est désactivé. Désactiver le thème restitue immédiatement la page Onche d'origine.
 
@@ -32,7 +32,7 @@ src/
   themes/              Palettes, contrastes et moteur CSS
   icons/               URLs des images et adaptation des icônes Onche
   styles/              CSS : disposition, sujets, messages, contrôles, widgets
-  desktop/             Bureau, gestionnaire de fenêtres, commandes, clavier et horloge
+  desktop/             Bureau, fenêtres, adaptation des topics, commandes, clavier et horloge
 scripts/build.mjs      Assemblage autonome JS + CSS
 userscript.meta.txt    Métadonnées du userscript
 tests/               Tests et fixtures de non-régression
@@ -45,7 +45,7 @@ Voir [l'architecture](docs/architecture.md), [le guide de contribution](CONTRIBU
 
 ## Fonctionnement et limites
 
-- Les clés historiques `retro-enabled`, `retro-version`, `retro-compact` sont conservées.
+- Les clés historiques `retro-enabled`, `retro-version`, `retro-compact` sont conservées ; `retro-mode` mémorise Clair, Sombre ou Noir.
 - Sans accès au stockage, le thème reste utilisable pendant la session.
 - Le bureau est isolé dans un Shadow DOM ; les styles du forum utilisent `data-onche-retro`.
 - Les pages Onche sont chargées dans des iframes de même origine afin de conserver connexion, formulaires et scripts natifs. Une évolution des en-têtes de sécurité du site pourrait nécessiter une autre intégration.

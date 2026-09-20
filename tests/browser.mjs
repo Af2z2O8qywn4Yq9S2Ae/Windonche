@@ -7,6 +7,7 @@ import { build } from '../scripts/build.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fixture = await readFile(new URL('./fixtures/forum.html', import.meta.url), 'utf8');
+const topicFixture = await readFile(new URL('./fixtures/topic.html', import.meta.url), 'utf8');
 const script = await build();
 const browser = await chromium.launch({ headless: true, ...(process.env.BROWSER_CHANNEL ? { channel: process.env.BROWSER_CHANNEL } : {}) });
 let scenarios = 0;
@@ -18,7 +19,8 @@ try {
     await page.route('https://raw.githubusercontent.com/**', route => route.abort());
     await page.route('https://onche.org/**', route => {
       if (route.request().resourceType() === 'document') {
-        return route.fulfill({ status: 200, contentType: 'text/html', body: fixture });
+        const body = new URL(route.request().url()).pathname.startsWith('/topic/') ? topicFixture : fixture;
+        return route.fulfill({ status: 200, contentType: 'text/html', body });
       }
       return route.abort();
     });
@@ -65,6 +67,17 @@ try {
     await desktop.locator('.window').nth(1).waitFor();
     assert.equal(await desktop.locator('.window').count(), 2);
     assert.deepEqual(await desktop.locator('.task').evaluateAll(items => items.map(item => item.dataset.windowId)), ['forum:1', 'topic:42']);
+    const topicHandle = await desktop.locator('.window[data-window-id="topic:42"] .window-frame').elementHandle();
+    const topicFrame = await topicHandle.contentFrame();
+    await topicFrame.addScriptTag({ content: script });
+    assert.equal(await topicFrame.locator('html').getAttribute('data-onche-topic-frame'), '');
+    assert.equal(await topicFrame.locator('header .logo').count(), 0);
+    assert.equal(await topicFrame.locator('.retro-topic-actions [data-favorite]').count(), 1);
+    assert.equal(await topicFrame.locator('.retro-topic-actions [data-refresh]').count(), 1);
+    assert.equal(await topicFrame.locator('.retro-topic-pages .pagination').count(), 1);
+    assert.equal(await topicFrame.locator('#right').isHidden(), true);
+    assert.equal(await topicFrame.locator('#topic > .title').isHidden(), true);
+    assert.equal(await topicFrame.locator('.retro-topic-pages a.active').evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(0, 0, 128)');
     await desktop.locator('.task').first().click();
     assert.deepEqual(await desktop.locator('.task').evaluateAll(items => items.map(item => item.dataset.windowId)), ['forum:1', 'topic:42']);
     await desktop.locator('.task').nth(1).click();
@@ -90,6 +103,16 @@ try {
     await desktop.locator('#w95').click();
     assert.equal(await page.locator('html').getAttribute('data-onche-retro'), '95');
     assert.match(await focusClass(), /start/);
+    await start.click();
+    await desktop.locator('#mode').click();
+    assert.equal(await page.locator('html').getAttribute('data-onche-mode'), 'dark');
+    await forumFrame.waitForFunction(() => document.documentElement.getAttribute('data-onche-mode') === 'dark');
+    await start.click();
+    await desktop.locator('#mode').click();
+    assert.equal(await page.locator('html').getAttribute('data-onche-mode'), 'black');
+    await start.click();
+    await desktop.locator('#mode').click();
+    assert.equal(await page.locator('html').getAttribute('data-onche-mode'), 'light');
     await start.click();
     await desktop.locator('#density').click();
     assert.equal(await page.locator('html').getAttribute('data-onche-compact'), '');

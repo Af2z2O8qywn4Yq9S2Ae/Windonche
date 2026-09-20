@@ -10,6 +10,7 @@ export function renderDesktop() {
   <a href="/forum/1/blabla-general" data-window-url="/forum/1/blabla-general">${icon('news-32x32',32)}<span>Blabla Général</span></a>
   <hr>
   ${Object.entries(THEMES).map(([id,t])=>`<button id="w${id}" aria-pressed="false">${icon('themes-32x32',32)}<span>${t.name}</span></button>`).join('')}
+  <button id="mode">${icon('sleep-32x32',32)}<span>Affichage : Clair</span></button>
   <button id="density" aria-pressed="false">${icon('settings-32x32',32)}<span>Liste compacte</span></button>
   <hr>
   <button id="disable">${icon('shutdown-32x32',32)}<span>Apparence d’origine</span></button>

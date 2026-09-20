@@ -2,7 +2,7 @@
 // @name         Onche — Windows 95 / 98
 // @namespace    local.onche.windows-retro
 // @version      2.4.0
-// @description  Bureau Windows 95/98 pour Onche avec fenêtres de topics déplaçables et icônes auto-hébergées.
+// @description  Bureau Windows 95/98 pour Onche avec fenêtres de topics, modes clair/sombre/noir et icônes auto-hébergées.
 // @match        https://onche.org/*
 // @match        https://www.onche.org/*
 // @run-at       document-end
@@ -91,10 +91,44 @@ function validateContrast(theme) {
 return { contrast, validateContrast };
 })();
 
+// Source: src/themes/modes.js
+modules["src/themes/modes.js"] = (() => {
+const MODES = Object.freeze({
+  light: Object.freeze({ name: 'Clair', colors: Object.freeze({}) }),
+  dark: Object.freeze({
+    name: 'Sombre',
+    colors: Object.freeze({
+      desktop:'#1b1b1b', face:'#2b2b2b', surface:'#1e1e1e', ink:'#f2f2f2',
+      muted:'#bdbdbd', link:'#8ab4ff', visited:'#d8a5ff', selected:'#005a9e',
+      selectedText:'#ffffff', titleStart:'#003c74', titleEnd:'#004f87',
+      light:'#555555', edge:'#3a3a3a', shadow:'#111111', dark:'#050505',
+      stripe:'#252525', quote:'#303030', tip:'#3b370d', desktopText:'#f5f5f5',
+    }),
+  }),
+  black: Object.freeze({
+    name: 'Noir',
+    colors: Object.freeze({
+      desktop:'#000000', face:'#101010', surface:'#000000', ink:'#f5f5f5',
+      muted:'#bdbdbd', link:'#79b8ff', visited:'#d7a0ff', selected:'#004f87',
+      selectedText:'#ffffff', titleStart:'#000000', titleEnd:'#202020',
+      light:'#3a3a3a', edge:'#1c1c1c', shadow:'#050505', dark:'#000000',
+      stripe:'#080808', quote:'#151515', tip:'#292500', desktopText:'#ffffff',
+    }),
+  }),
+});
+
+function applyMode(theme, mode) {
+  return { ...theme, ...MODES[mode].colors };
+}
+
+return { MODES, applyMode };
+})();
+
 // Source: src/themes/engine.js
 modules["src/themes/engine.js"] = (() => {
 const { read, write } = modules["src/platform/storage.js"];
 const { validateContrast } = modules["src/themes/contrast.js"];
+const { MODES, applyMode } = modules["src/themes/modes.js"];
 
 /** Gère la palette, les couches CSS et les préférences, sans connaître le bureau. */
 class ThemeEngine {
@@ -103,9 +137,11 @@ class ThemeEngine {
     this.document = documentRef;
     this.root = documentRef.documentElement;
     const storedTheme = read('retro-version', '98');
+    const storedMode = read('retro-mode', 'light');
     this.state = {
       enabled: read('retro-enabled', true) !== false,
       theme: Object.hasOwn(registry, storedTheme) ? storedTheme : '98',
+      mode: Object.hasOwn(MODES, storedMode) ? storedMode : 'light',
       compact: read('retro-compact', false) === true,
     };
     this.layers = new Map();
@@ -131,7 +167,10 @@ class ThemeEngine {
     if (!Object.hasOwn(this.registry, next.theme)) {
       throw new Error(`Thème inconnu : ${next.theme}`);
     }
-    const theme = this.registry[next.theme];
+    if (!Object.hasOwn(MODES, next.mode)) {
+      throw new Error(`Mode inconnu : ${next.mode}`);
+    }
+    const theme = applyMode(this.registry[next.theme], next.mode);
     validateContrast(theme);
     const variables = Object.entries(theme)
       .filter(([key]) => key !== 'name')
@@ -145,14 +184,18 @@ class ThemeEngine {
     this.state = next;
     if (next.enabled) this.root.setAttribute('data-onche-retro', next.theme);
     else this.root.removeAttribute('data-onche-retro');
+    if (next.enabled) this.root.setAttribute('data-onche-mode', next.mode);
+    else this.root.removeAttribute('data-onche-mode');
     this.root.toggleAttribute('data-onche-compact', next.enabled && next.compact);
     write('retro-enabled', next.enabled);
     write('retro-version', next.theme);
+    write('retro-mode', next.mode);
     write('retro-compact', next.compact);
   }
 
   destroy() {
     this.root.removeAttribute('data-onche-retro');
+    this.root.removeAttribute('data-onche-mode');
     this.root.removeAttribute('data-onche-compact');
     for (const sheet of this.layers.values()) sheet.remove();
     this.layers.clear();
@@ -182,7 +225,7 @@ modules["src/styles/widgets.css"] = { default: "/* Finishing: editor, account me
 modules["src/styles/onche-adapter.css"] = { default: "/* Original heading stays in flow. Only Onche's clone is fixed. */\nhtml[data-onche-retro] :is(#forum,#topic) > .title {\n  position:relative!important; top:auto!important; left:auto!important;\n  transform:none!important; margin:0!important; z-index:1!important;\n}\nhtml[data-onche-retro] .sticky-container { top:var(--w9-chrome-height)!important; }\nhtml[data-onche-retro] .sticky-container > .title {\n  position:relative!important; top:auto!important; margin:0!important;\n  background:var(--w9-title)!important; color:var(--w9-selectedText)!important;\n  padding:5px 7px!important; border:0!important;\n}\nhtml[data-onche-retro] .sticky-container > .title :is(h1,h2,a,span,.mdi) { color:var(--w9-selectedText)!important; }\n/* Stories are thumbnails, not raised command buttons. Preserve native visibility. */\nhtml[data-onche-retro] #stories-root { position:relative!important; clear:both; margin:0!important; }\nhtml[data-onche-retro] .stories-bar { background:var(--w9-face)!important; padding:10px!important; }\nhtml[data-onche-retro] .stories-bubble {\n  padding:2px!important; background:transparent!important; border:0!important;\n  box-shadow:none!important; color:var(--w9-ink)!important;\n}\nhtml[data-onche-retro] .stories-bubble__ring {\n  background:var(--w9-face)!important; box-shadow:var(--w9-sunken)!important;\n  padding:3px!important; transform:none!important;\n}\nhtml[data-onche-retro] .stories-bubble--unseen .stories-bubble__ring { outline:2px solid var(--w9-selected); outline-offset:1px; }\nhtml[data-onche-retro] .stories-bubble__name,\nhtml[data-onche-retro] .stories-bubble > :is(span,div):last-child {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:var(--w9-ink)!important;\n  text-shadow:none!important; opacity:1!important;\n}\n/* Neutralize gradient usernames on light surfaces; keep title usernames white. */\nhtml[data-onche-retro] body .pseudo {\n  background-image:none!important; background-clip:border-box!important;\n  -webkit-text-fill-color:currentColor!important; color:var(--w9-ink)!important;\n  text-shadow:none!important;\n}\nhtml[data-onche-retro] body > header :is(a,span,.username,.pseudo) {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:currentColor!important;\n  opacity:1!important; text-shadow:none!important;\n}\nhtml[data-onche-retro] body .messages > .message > .message-top .pseudo,\nhtml[data-onche-retro] body .topics .topic:hover .pseudo {\n  color:var(--w9-selectedText)!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] #right .content:not(.centered) { background:var(--w9-surface)!important; }\nhtml[data-onche-retro] #right .content:not(.centered) :is(a,span,.color,.pseudo) {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] #right .content.links a:hover,\nhtml[data-onche-retro] #right .content.links a:hover * { color:var(--w9-selectedText)!important; }\nhtml[data-onche-retro] :is(.bloc-title-more,.bloc > .title .right) { opacity:1!important; }\nhtml[data-onche-retro] .bloc > .title .button {\n  background:var(--w9-face)!important; color:var(--w9-ink)!important;\n}\nhtml[data-onche-retro] .bloc > .title .button * { color:var(--w9-ink)!important; }\nhtml[data-onche-retro] :is(.button,button):not(:disabled):not([aria-disabled=\"true\"]) {\n  opacity:1!important; -webkit-text-fill-color:currentColor!important;\n}\nhtml[data-onche-retro] :is(.message-date,.answer-date,.topic-username,.composer__welcome) { color:var(--w9-muted)!important; }\n/* Do not recolor spoiler descendants or alter their visibility. */\nhtml[data-onche-retro] #context { background:var(--w9-face)!important; color:var(--w9-ink)!important; box-shadow:var(--w9-raised)!important; }\nhtml[data-onche-retro] #context .item { color:var(--w9-ink)!important; }\nhtml[data-onche-retro] #context .item:hover { background:var(--w9-selected)!important; color:var(--w9-selectedText)!important; }\n" };
 
 // Source: src/styles/windowed.css
-modules["src/styles/windowed.css"] = { default: "html[data-onche-windowed] body { overflow:hidden!important; }\nhtml[data-onche-windowed] body > :not(#onche-retro-desktop) { display:none!important; }\n\n/* Dans une fenêtre, le site conserve son fonctionnement sans le chrome global. */\nhtml[data-onche-frame][data-onche-retro] body { padding-bottom:0!important; }\nhtml[data-onche-frame][data-onche-retro] body > header { top:0!important; }\nhtml[data-onche-frame][data-onche-retro] #content { padding-top:60px!important; }\nhtml[data-onche-frame][data-onche-retro] body.sticky-right #content #right { top:56px!important; }\n\n/* La page courante doit rester évidente parmi plusieurs dizaines de pages. */\nhtml[data-onche-retro] body #content .pagination > a.active,\nhtml[data-onche-retro] body #content .pagination > a[aria-current=\"page\"] {\n  background:var(--w9-selected)!important; color:var(--w9-selectedText)!important;\n  box-shadow:var(--w9-sunken)!important; outline:1px dotted var(--w9-selectedText)!important;\n  outline-offset:-4px; font-weight:700!important;\n}\n" };
+modules["src/styles/windowed.css"] = { default: "html[data-onche-windowed] body { overflow:hidden!important; }\nhtml[data-onche-windowed] body > :not(#onche-retro-desktop) { display:none!important; }\n\n/* Dans une fenêtre, le site conserve son fonctionnement sans le chrome global. */\nhtml[data-onche-frame][data-onche-retro] body { padding-bottom:0!important; }\nhtml[data-onche-frame][data-onche-retro] body > header { top:0!important; }\nhtml[data-onche-frame][data-onche-retro] #content { padding-top:60px!important; }\nhtml[data-onche-frame][data-onche-retro] body.sticky-right #content #right { top:56px!important; }\n\n/* La page courante doit rester évidente parmi plusieurs dizaines de pages. */\nhtml[data-onche-retro] body #content .pagination > a.active,\nhtml[data-onche-retro] body #content .pagination > a[aria-current=\"page\"] {\n  background:var(--w9-selected)!important; color:var(--w9-selectedText)!important;\n  box-shadow:var(--w9-sunken)!important; outline:1px dotted var(--w9-selectedText)!important;\n  outline-offset:-4px; font-weight:700!important;\n}\n\n/* Un topic devient le document d'un programme, pas un second bureau imbriqué. */\nhtml[data-onche-topic-frame][data-onche-retro],\nhtml[data-onche-topic-frame][data-onche-retro] body,\nhtml[data-onche-topic-frame][data-onche-retro] #content {\n  background:var(--w9-face)!important; background-image:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] body > header {\n  height:44px!important; padding:3px!important; background:var(--w9-face)!important;\n  box-shadow:inset 0 -1px var(--w9-shadow),inset 0 -2px var(--w9-light)!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] .retro-topic-toolbar {\n  width:100%; height:38px; display:grid; grid-template-columns:1fr auto 1fr;\n  align-items:center; gap:8px; color:var(--w9-ink); font-family:var(--w9-font);\n}\nhtml[data-onche-topic-frame][data-onche-retro] .retro-topic-pages { grid-column:2; min-width:0; }\nhtml[data-onche-topic-frame][data-onche-retro] .retro-topic-pages .pagination {\n  display:flex; align-items:center; justify-content:center; gap:3px; white-space:nowrap;\n}\nhtml[data-onche-topic-frame][data-onche-retro] body > header .retro-topic-toolbar .retro-topic-pages .pagination > a.active,\nhtml[data-onche-topic-frame][data-onche-retro] body > header .retro-topic-toolbar .retro-topic-pages .pagination > a[aria-current=\"page\"] {\n  background:var(--w9-selected)!important; color:var(--w9-selectedText)!important;\n  box-shadow:var(--w9-sunken)!important; outline:1px dotted var(--w9-selectedText)!important;\n  outline-offset:-4px; font-weight:700!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] .retro-topic-actions {\n  grid-column:3; justify-self:end; display:flex; align-items:center; gap:3px;\n}\nhtml[data-onche-topic-frame][data-onche-retro] .retro-topic-actions > * {\n  width:30px!important; height:28px!important; display:grid!important; place-items:center;\n  padding:4px!important; background:var(--w9-face)!important; color:var(--w9-ink)!important;\n  box-shadow:var(--w9-raised)!important; text-decoration:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content { padding-top:52px!important; }\nhtml[data-onche-topic-frame][data-onche-retro] #content > .container {\n  display:block!important; width:100%!important; max-width:none!important; padding:8px!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content #left {\n  width:100%!important; max-width:none!important; min-width:0!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content #right,\nhtml[data-onche-topic-frame][data-onche-retro] #topic > .title,\nhtml[data-onche-topic-frame][data-onche-retro] #content .content.pagination,\nhtml[data-onche-topic-frame][data-onche-retro] .sticky-container,\nhtml[data-onche-topic-frame][data-onche-retro] footer,\nhtml[data-onche-topic-frame][data-onche-retro] .forum-fab {\n  display:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content #topic {\n  padding:0!important; border:0!important; background:transparent!important; box-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages {\n  padding:2px!important; background:var(--w9-surface)!important; box-shadow:var(--w9-sunken)!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages > .message {\n  margin:0!important; padding:0!important; border:0!important;\n  border-bottom:1px solid var(--w9-edge)!important; background:var(--w9-surface)!important; box-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages > .message > .message-top {\n  min-height:34px!important; padding:4px 7px!important; background:var(--w9-face)!important;\n  color:var(--w9-ink)!important; border-bottom:1px solid var(--w9-edge)!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages > .message > .message-top :is(.message-username,.message-username span,.pseudo,.right a,.right .mdi) {\n  color:var(--w9-ink)!important; -webkit-text-fill-color:var(--w9-ink)!important; text-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages > .message > .message-content {\n  margin:0!important; padding:12px!important; background:var(--w9-surface)!important;\n  color:var(--w9-ink)!important; box-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .messages > .message > .message-bottom {\n  padding:4px 7px!important; background:var(--w9-face)!important;\n  border-top:1px solid var(--w9-edge)!important; box-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .insert-image {\n  margin-top:10px!important; border-top:1px solid var(--w9-shadow)!important;\n  background:var(--w9-face)!important; box-shadow:none!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .insert-image > .title {\n  background:var(--w9-face)!important; color:var(--w9-ink)!important;\n  border-bottom:1px solid var(--w9-edge)!important;\n}\nhtml[data-onche-topic-frame][data-onche-retro] #content .insert-image > .title :is(a,span,.mdi) { color:var(--w9-ink)!important; }\nhtml[data-onche-topic-frame][data-onche-retro] #content .insert-image > .title .right,\nhtml[data-onche-topic-frame][data-onche-retro] #content .insert-image > .title .mdi-arrow-left { display:none!important; }\n\n@media(max-width:700px) {\n  html[data-onche-topic-frame][data-onche-retro] .retro-topic-toolbar { grid-template-columns:auto 1fr; }\n  html[data-onche-topic-frame][data-onche-retro] .retro-topic-pages { grid-column:1; overflow-x:auto; }\n  html[data-onche-topic-frame][data-onche-retro] .retro-topic-actions { grid-column:2; }\n}\n" };
 
 // Source: src/icons/assets.js
 modules["src/icons/assets.js"] = (() => {
@@ -277,6 +320,7 @@ function renderDesktop() {
   <a href="/forum/1/blabla-general" data-window-url="/forum/1/blabla-general">${icon('news-32x32',32)}<span>Blabla Général</span></a>
   <hr>
   ${Object.entries(THEMES).map(([id,t])=>`<button id="w${id}" aria-pressed="false">${icon('themes-32x32',32)}<span>${t.name}</span></button>`).join('')}
+  <button id="mode">${icon('sleep-32x32',32)}<span>Affichage : Clair</span></button>
   <button id="density" aria-pressed="false">${icon('settings-32x32',32)}<span>Liste compacte</span></button>
   <hr>
   <button id="disable">${icon('shutdown-32x32',32)}<span>Apparence d’origine</span></button>
@@ -760,7 +804,7 @@ class WindowManager {
   }
 
   setTheme(state) {
-    this.themeState = { enabled: state.enabled, theme: state.theme, compact: state.compact };
+    this.themeState = { enabled: state.enabled, theme: state.theme, mode: state.mode, compact: state.compact };
     for (const panel of this.elements.values()) this.postTheme(panel.querySelector('iframe').contentWindow);
   }
 }
@@ -778,6 +822,7 @@ modules["src/styles/desktop.css"] = { default: ":host { all:initial; font:12px v
 // Source: src/desktop/mount.js
 modules["src/desktop/mount.js"] = (() => {
 const { THEMES } = modules["src/themes/registry.js"];
+const { MODES } = modules["src/themes/modes.js"];
 const { renderDesktop } = modules["src/desktop/template.js"];
 const { bindStartMenu } = modules["src/desktop/menu.js"];
 const { bindClock } = modules["src/desktop/status.js"];
@@ -800,7 +845,7 @@ function mountDesktop(engine) {
 
   function apply(patch = {}) {
     engine.update(patch);
-    const { enabled, theme, compact } = engine.state;
+    const { enabled, theme, mode, compact } = engine.state;
     document.documentElement.toggleAttribute('data-onche-windowed', enabled);
     select('.workspace').hidden = !enabled;
     select('.taskbar').hidden = !enabled;
@@ -810,6 +855,8 @@ function mountDesktop(engine) {
       select(`#w${id} span`).textContent = `${theme === id ? '✓' : '○'}  ${definition.name}`;
       select(`#w${id}`).setAttribute('aria-pressed', String(theme === id));
     }
+    select('#mode span').textContent = `Affichage : ${MODES[mode].name}`;
+    select('#mode').dataset.mode = mode;
     select('#density span').textContent = `${compact ? '✓' : '○'}  Liste compacte`;
     select('#density').setAttribute('aria-pressed', String(compact));
     windows.setTheme(engine.state);
@@ -831,6 +878,11 @@ function mountDesktop(engine) {
     apply({ compact: !engine.state.compact });
     menu.start.focus();
   });
+  select('#mode').addEventListener('click', () => {
+    const modes = Object.keys(MODES);
+    apply({ mode: modes[(modes.indexOf(engine.state.mode) + 1) % modes.length] });
+    menu.start.focus();
+  });
   select('#disable').addEventListener('click', () => setEnabled(false));
   select('.restore').addEventListener('click', () => setEnabled(true));
   for (const link of shadow.querySelectorAll('[data-window-url]')) {
@@ -850,6 +902,44 @@ function mountDesktop(engine) {
 return { mountDesktop };
 })();
 
+// Source: src/desktop/topic-frame.js
+modules["src/desktop/topic-frame.js"] = (() => {
+const { topicId } = modules["src/desktop/topic-tabs.js"];
+
+/** Simplifie uniquement l'intérieur d'une iframe de topic. */
+function prepareTopicFrame(documentRef = document, href = window.location.href) {
+  const topic = topicId(href) && documentRef.querySelector('#topic');
+  const header = documentRef.querySelector('body > header');
+  if (!topic || !header || documentRef.documentElement.hasAttribute('data-onche-topic-frame')) return false;
+
+  documentRef.documentElement.setAttribute('data-onche-topic-frame', '');
+  const toolbar = documentRef.createElement('nav');
+  toolbar.className = 'retro-topic-toolbar';
+  toolbar.setAttribute('aria-label', 'Outils du topic');
+
+  const pages = documentRef.createElement('div');
+  pages.className = 'retro-topic-pages';
+  const pagination = topic.querySelector(':scope > .content.pagination .pagination');
+  if (pagination) {
+    const wrapper = pagination.closest('.content.pagination');
+    for (const active of pagination.querySelectorAll('a.active')) active.setAttribute('aria-current', 'page');
+    pages.append(pagination);
+    if (wrapper) wrapper.hidden = true;
+  }
+
+  const actions = documentRef.createElement('div');
+  actions.className = 'retro-topic-actions';
+  const nativeActions = topic.querySelector(':scope > .title > .right');
+  if (nativeActions) actions.append(...nativeActions.children);
+
+  toolbar.append(pages, actions);
+  header.replaceChildren(toolbar);
+  return true;
+}
+
+return { prepareTopicFrame };
+})();
+
 // Source: src/main.js
 modules["src/main.js"] = (() => {
 const { THEMES } = modules["src/themes/registry.js"];
@@ -857,6 +947,7 @@ const { ThemeEngine } = modules["src/themes/engine.js"];
 const { installStyles } = modules["src/styles/install.js"];
 const { installSiteIcons } = modules["src/icons/site-icons.js"];
 const { mountDesktop } = modules["src/desktop/mount.js"];
+const { prepareTopicFrame } = modules["src/desktop/topic-frame.js"];
 
 // Les iframes reçoivent le thème, mais seul le document principal crée le bureau.
 if (!document.getElementById('onche-retro-tokens')) {
@@ -867,6 +958,7 @@ if (!document.getElementById('onche-retro-tokens')) {
     if (!document.getElementById('onche-retro-desktop')) mountDesktop(engine);
   } else {
     document.documentElement.setAttribute('data-onche-frame', '');
+    prepareTopicFrame();
     engine.update();
     window.addEventListener('message', event => {
       if (event.origin !== window.location.origin || event.source !== window.top) return;
