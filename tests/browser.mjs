@@ -17,7 +17,7 @@ try {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     // Icônes indisponibles : le bureau doit rester utilisable sans réseau.
-    await page.route('https://98.js.org/**', route => route.abort());
+    await page.route('https://raw.githubusercontent.com/**', route => route.abort());
     async function load(source, values = {}) {
       await page.goto('about:blank');
       await page.setContent(fixture);

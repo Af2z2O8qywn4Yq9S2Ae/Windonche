@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Onche — Windows 95 / 98
 // @namespace    local.onche.windows-retro
-// @version      2.1.0
-// @description  Moteur de thèmes Onche : Windows 95/98, palette centralisée, contrôle du contraste, composants et icônes externes 98.js.
+// @version      2.2.0
+// @description  Moteur de thèmes Onche : Windows 95/98, palette centralisée, contrôle du contraste, composants et bibliothèque d'icônes auto-hébergée.
 // @match        https://onche.org/*
 // @match        https://www.onche.org/*
 // @run-at       document-end
@@ -184,8 +184,9 @@ modules["src/styles/onche-adapter.css"] = { default: "/* Original heading stays 
 
 // Source: src/icons/assets.js
 modules["src/icons/assets.js"] = (() => {
-// Images distantes du projet 98.js ; aucun code distant n'est exécuté.
-const ICON_BASE = 'https://98.js.org/images/icons/';
+// Copies PNG versionnées dans ce dépôt et servies directement par GitHub.
+// Un chemin absolu est nécessaire : le userscript s'exécute depuis onche.org.
+const ICON_BASE = 'https://raw.githubusercontent.com/Af2z2O8qywn4Yq9S2Ae/Windonche/main/assets/icons/';
 
 function iconURL(name) {
   return `${ICON_BASE}${name}.png`;

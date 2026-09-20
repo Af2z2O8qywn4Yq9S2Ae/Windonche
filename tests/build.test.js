@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { readFile, readdir, mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Script, runInNewContext } from 'node:vm';
@@ -16,7 +16,25 @@ test('build reproductible, autonome, un seul en-tête Onche', async () => {
   assert.equal((first.match(/==UserScript==/g) || []).length, 1);
   assert.ok(first.includes('// @match        https://onche.org/*'));
   assert.ok(!first.includes('chatgpt.com'));
+  assert.ok(first.includes('raw.githubusercontent.com/Af2z2O8qywn4Yq9S2Ae/Windonche/main/assets/icons/'));
+  assert.ok(!first.includes('98.js.org/images/icons/'));
   assert.doesNotThrow(() => new Script(first));
+});
+
+test('bibliothèque locale complète et icônes utilisées présentes', async () => {
+  const files = new Set((await readdir(new URL('../assets/icons/', import.meta.url)))
+    .filter(name => name.endsWith('.png')));
+  assert.equal(files.size, 243);
+  const sources = await Promise.all([
+    'src/icons/site-icons.js',
+    'src/styles/install.js',
+    'src/desktop/template.js'
+  ].map(read));
+  const referenced = sources.flatMap(source =>
+    [...source.matchAll(/icon(?:URL)?\\('([^']+)'/g)].map(match => `${match[1]}.png`)
+  );
+  assert.ok(referenced.length > 0);
+  for (const filename of referenced) assert.ok(files.has(filename), `${filename} absent de assets/icons`);
 });
 
 test('extraction CSS sans changement de cascade ou de règles', async () => {
