@@ -34,6 +34,7 @@ userscript.meta.txt    Métadonnées du userscript
 tests/               Tests et fixtures de non-régression
 dist/                Userscript prêt à installer
 docs/                Architecture et guide de validation
+assets/icons/        243 icônes PNG servies directement depuis ce dépôt
 ```
 
 Voir [l'architecture](docs/architecture.md), [le guide de contribution](CONTRIBUTING.md) et [la validation](docs/testing.md).
@@ -44,7 +45,7 @@ Voir [l'architecture](docs/architecture.md), [le guide de contribution](CONTRIBU
 - Sans accès au stockage, le thème reste utilisable pendant la session.
 - Le bureau est isolé dans un Shadow DOM ; les styles du forum utilisent `data-onche-retro`.
 - Liens, messages et gestionnaires d'événements natifs sont conservés.
-- Les icônes sont chargées depuis [98.js](https://98.js.org/images/icons/), un hébergement tiers. Aucun JavaScript distant n'est chargé. Le thème reste utilisable si les images sont indisponibles.
+- Les 243 icônes PNG sont versionnées dans [`assets/icons/`](assets/icons/) et chargées depuis la copie GitHub de ce dépôt. Aucun JavaScript distant n'est chargé. Le thème reste utilisable si les images sont indisponibles.
 - Clavier : Tabulation, Entrée, Espace, flèches, Début/Fin dans Démarrer, Échap pour fermer. Le focus revient à une commande visible après activation/désactivation.
 - Le contrôle de contraste porte sur les paires déclarées de la palette ; il ne constitue pas un audit complet d'accessibilité du site.
 
