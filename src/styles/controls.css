@@ -1,0 +1,23 @@
+html[data-onche-retro] :is(button:not(.stories-bubble),.button,input[type="submit"],input[type="button"],.pagination a,.navigation a,.format .items .item,.composer__toolbar .item) {
+  border:0!important; border-radius:0!important; background:var(--w9-face)!important;
+  color:var(--w9-ink)!important; box-shadow:var(--w9-raised)!important;
+  font-family:var(--w9-font)!important; text-shadow:none!important;
+}
+html[data-onche-retro] :is(button:not(.stories-bubble),.button,input[type="submit"],input[type="button"],.pagination a,.navigation a) { padding:6px 10px; }
+html[data-onche-retro] :is(button:not(.stories-bubble),.button,.pagination a,.navigation a):active,
+html[data-onche-retro] .pagination a.active { box-shadow:var(--w9-sunken)!important; background:var(--w9-edge)!important; }
+html[data-onche-retro] :is(button:not(.stories-bubble),.button,input,textarea,select,a):focus-visible { outline:1px dotted var(--w9-ink)!important; outline-offset:2px!important; }
+html[data-onche-retro] :is(button:disabled,input:disabled,.pagination a.disabled) { color:var(--w9-shadow)!important; text-shadow:1px 1px var(--w9-surface)!important; }
+html[data-onche-retro] :is(textarea,select,input:not([type]),input[type="text"],input[type="search"],input[type="email"],input[type="password"],input[type="url"],input[type="number"],.textarea) {
+  background:var(--w9-surface)!important; color:var(--w9-ink)!important; border:0!important; border-radius:0!important;
+  box-shadow:var(--w9-sunken)!important; font-family:var(--w9-font)!important; padding:8px!important;
+}
+html[data-onche-retro] :is(input,textarea)::placeholder { color:var(--w9-muted)!important; }
+html[data-onche-retro] :is(.composer__toolbar,.composer__footer,.format .items) { background:var(--w9-face)!important; border-radius:0!important; }
+html[data-onche-retro] .composer { padding:4px!important; }
+html[data-onche-retro] .home-greeting { padding:20px!important; }
+html[data-onche-retro] .home-greeting-text { color:var(--w9-selected)!important; font-family:var(--w9-font)!important; }
+html[data-onche-retro] footer { color:var(--w9-desktopText)!important; background:transparent!important; }
+html[data-onche-retro] footer :is(a,.footer__meta) { color:var(--w9-desktopText)!important; }
+html[data-onche-retro] .forum-fab { bottom:54px!important; border-radius:0!important; background:var(--w9-face)!important; color:var(--w9-ink)!important; box-shadow:var(--w9-raised)!important; }
+html[data-onche-retro] ::selection { background:var(--w9-selected); color:var(--w9-selectedText); }

@@ -1,0 +1,27 @@
+html[data-onche-retro] .messages > .message { padding:3px!important; row-gap:0!important; margin-bottom:14px!important; }
+html[data-onche-retro] .messages > .message > .message-top {
+  background:var(--w9-title)!important; color:var(--w9-selectedText)!important; padding:5px 7px!important;
+  min-height:38px; font-family:var(--w9-font)!important;
+}
+html[data-onche-retro] .messages > .message > .message-top :is(.message-username,.message-username span,.right a,.right .mdi) {
+  color:var(--w9-selectedText)!important; text-shadow:none!important; background-image:none!important;
+  -webkit-text-fill-color:var(--w9-selectedText)!important;
+}
+html[data-onche-retro] .messages > .message > .message-top img.avatar {
+  width:30px!important; height:30px!important; border-radius:0!important; border:1px solid var(--w9-surface);
+}
+html[data-onche-retro] .messages > .message > .message-content {
+  background:var(--w9-surface)!important; color:var(--w9-ink)!important; margin:3px 0!important; padding:12px!important;
+  box-shadow:var(--w9-sunken)!important; font-size:15px!important; line-height:1.5!important;
+}
+html[data-onche-retro] .message-content .message.answer {
+  background:var(--w9-quote)!important; color:var(--w9-ink)!important; border:1px solid var(--w9-shadow)!important;
+  border-left:3px solid var(--w9-shadow)!important; border-radius:0!important; box-shadow:none!important;
+}
+html[data-onche-retro] .message.answer .message-content { color:var(--w9-ink)!important; }
+html[data-onche-retro] .message-content a.link { color:var(--w9-link)!important; }
+html[data-onche-retro] .message-content .signature { color:var(--w9-muted)!important; border-top-color:var(--w9-shadow)!important; }
+html[data-onche-retro] .messages > .message > .message-bottom {
+  background:var(--w9-face)!important; padding:5px 7px!important; box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light);
+}
+html[data-onche-retro] .message-date { background:transparent!important; color:var(--w9-muted)!important; border-radius:0!important; }

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Forum de test</title>
+<style>
+body { margin: 0; } header { position:fixed; left:0; right:0; }
+.container { margin:auto; } .topic { display:flex; padding:12px; gap:12px; }
+.message { margin-top:20px; } .spoiler { color:transparent; background:#222; }
+.spoiler.revealed { color:white; } .native-hidden { display:none; }
+</style></head><body>
+<header><a class="logo" href="#"><span class="image">Forum</span></a></header>
+<main id="content"><div class="container"><section id="forum" class="bloc">
+<div class="title"><h1>Forum de test</h1></div>
+<div class="topics"><div class="topic"><a class="topic-subject" href="#topic">Sujet exemple</a><span class="topic-username">Auteur</span></div></div>
+</section><section class="messages"><article class="message">
+<div class="message-top"><span class="pseudo">Auteur</span></div>
+<div class="message-content">Un message avec <a class="link" href="#lien">un lien</a> et <span class="spoiler">un spoiler</span>.</div>
+<div class="message-bottom"><span class="message-date">Aujourd’hui</span></div>
+</article></section><section class="composer"><label for="reply">Réponse</label><textarea id="reply"></textarea><button id="native-action">Action native</button></section>
+<div class="native-hidden">Contenu caché par Onche</div></div></main>
+<script>
+window.nativeClicks = 0;
+document.querySelector('#native-action').onclick = () => window.nativeClicks++;
+document.querySelector('.spoiler').onclick = event => event.target.classList.toggle('revealed');
+</script></body></html>
