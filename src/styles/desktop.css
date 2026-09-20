@@ -14,7 +14,8 @@ button:focus-visible,a:focus-visible { outline:1px dotted var(--w9-ink); outline
 .taskbar { position:fixed; bottom:0; left:0; right:0; height:36px; padding:4px; display:flex; gap:6px; align-items:stretch; background:var(--w9-face); box-shadow:inset 0 1px var(--w9-surface),inset 0 2px var(--w9-edge); z-index:9000; }
 .start { display:flex; align-items:center; gap:4px; padding:3px 8px 3px 3px; font-weight:bold; }
 .separator { width:2px; border-left:1px solid var(--w9-shadow); border-right:1px solid var(--w9-surface); margin:1px; }
-.task { text-align:left; width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 8px; font-weight:bold; background:var(--w9-edge); display:flex; align-items:center; gap:6px; min-width:0; }
+.tasks { flex:1; min-width:0; display:flex; align-items:stretch; gap:4px; overflow-x:auto; scrollbar-width:thin; }
+.task { text-align:left; flex:1 1 180px; max-width:260px; min-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:4px 8px; font-weight:bold; background:var(--w9-edge); display:flex; align-items:center; gap:6px; }
 .task-label { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .tray { margin-left:auto; display:flex; align-items:center; padding:0 9px; gap:10px; box-shadow:inset 1px 1px var(--w9-shadow),inset -1px -1px var(--w9-light); white-space:nowrap; }
 .menu { position:fixed; bottom:35px; left:3px; width:270px; max-width:calc(100vw - 6px); max-height:calc(100dvh - 44px); overflow-y:auto; padding:3px; z-index:9001; display:flex; box-shadow:inset 1px 1px var(--w9-light),inset -1px -1px var(--w9-ink),inset 2px 2px var(--w9-edge),inset -2px -2px var(--w9-shadow),2px 2px var(--w9-shadow); background:var(--w9-face); }
@@ -24,4 +25,4 @@ button:focus-visible,a:focus-visible { outline:1px dotted var(--w9-ink); outline
 .items a:hover,.items button:hover,.items a:focus-visible,.items button:focus-visible { background:var(--w9-selected); color:var(--w9-selectedText); outline:none; }
 .items hr { border:0; border-top:1px solid var(--w9-shadow); border-bottom:1px solid var(--w9-surface); margin:4px 2px; }
 .restore { position:fixed; bottom:8px; left:8px; z-index:9000; padding:8px 12px; }
-@media(max-width:500px) { .task { flex:1; width:80px; } .tray .network { display:none; } }
+@media(max-width:500px) { .task { flex-basis:100px; min-width:80px; } .tray .network { display:none; } }

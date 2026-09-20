@@ -1,12 +1,14 @@
 # Windonche
 
-Un userscript qui donne à **Onche** l'apparence de Windows 95 ou Windows 98 : palette rétro, barre des tâches, menu Démarrer, icônes et liste de sujets compacte.
+Un userscript qui donne à **Onche** l'apparence de Windows 95 ou Windows 98 : palette rétro, barre des tâches multi-topics, menu Démarrer, icônes et liste de sujets compacte.
 
 ## Installer
 
 1. Installer Tampermonkey ou Violentmonkey dans son navigateur.
 2. Ouvrir [`dist/windonche.user.js`](dist/windonche.user.js), puis **Raw** pour l'installer. On peut aussi copier ce fichier dans un nouveau script du gestionnaire.
 3. Recharger Onche. Le bouton **Démarrer** permet de choisir le thème, la densité ou l'apparence d'origine.
+
+Chaque topic visité dans le même onglet navigateur est ajouté à la barre des tâches. Cliquer sur un bouton revient à ce topic ; la croix ferme le topic actif et ouvre le précédent, ou revient au Blabla Général si la liste est vide. Cette liste est limitée à l'onglet courant et disparaît quand celui-ci est fermé.
 
 Installer uniquement le fichier généré dans `dist/`. Les modules de `src/` ne sont pas des userscripts autonomes. Remplacer l'ancienne installation en conservant son stockage pour retrouver ses préférences ; éviter d'activer deux copies.
 

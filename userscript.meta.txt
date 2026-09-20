@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Onche — Windows 95 / 98
 // @namespace    local.onche.windows-retro
-// @version      2.2.0
-// @description  Moteur de thèmes Onche : Windows 95/98, palette centralisée, contrôle du contraste, composants et bibliothèque d'icônes auto-hébergée.
+// @version      2.3.0
+// @description  Thèmes Windows 95/98 pour Onche avec barre des tâches multi-topics et bibliothèque d'icônes auto-hébergée.
 // @match        https://onche.org/*
 // @match        https://www.onche.org/*
 // @run-at       document-end

@@ -18,7 +18,7 @@ export function renderDesktop() {
 <div class="taskbar" role="navigation" aria-label="Bureau Windows">
  <button class="raised start" aria-expanded="false" aria-controls="start-menu">${icon('windows-22x22-8bpp',22)}<span>Démarrer</span></button>
  <span class="separator" aria-hidden="true"></span>
- <button class="raised task pressed" title="Retour en haut de page">${icon('internet-explorer-16x16')}<span class="task-label">Onche — Internet Explorer</span></button>
+ <div class="tasks" role="tablist" aria-label="Topics ouverts"></div>
  <div class="tray"><span class="network" aria-hidden="true">${icon('network-16x16')}</span><time></time></div>
 </div>
 <button class="raised restore" hidden>${icon('windows-22x22-8bpp',22)} Activer Windows 95/98</button>`;
